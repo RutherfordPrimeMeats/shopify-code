@@ -1,0 +1,3 @@
+.rpm-selectable-item, .rpm-selected-item {
+	cursor: pointer;
+}
