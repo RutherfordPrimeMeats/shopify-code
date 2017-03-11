@@ -28,7 +28,7 @@
 		var selectedItem = $('<div class="rpm-selected-item">' + i + '</div>');
 		selectedItem.click(function(e) {
 			$(e.target).remove();
-	    	resetSelectedItemText();
+			resetSelectedItemText();
 		});
 		selectedItemsElt.append(selectedItem);
 		
