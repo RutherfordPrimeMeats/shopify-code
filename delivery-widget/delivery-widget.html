@@ -1,53 +1,21 @@
-{{ '//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js' | script_tag }}
-{{ '//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js' | script_tag }}
-{{ '//ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css' | stylesheet_tag }}
-
-<div class="grid__item medium-up--one-half cart-note">
-  <p>
-    <label for="datePicker" class="cart-note__label small--text-center">Pick a delivery date:</label>
-    <input id="datePicker" required type="text" name="attributes[date]" value="{{ cart.attributes.date }}" />
-    <br>
-    <input type="radio" name="attributes[location]" value="home">Home Delivery<br>
-    <input type="radio" name="attributes[location]" value="mason">Mason's Cellar<br>
-    <span style="display:block" class="instructions"
-          >Tuesday and Thursday deliveries are 4-6pm. Saturday deliveries are 9am-12pm.</span>
-  </p>
-</div>
-
-<script>
-  (function() {
-    // Only allow Tue/Thur/Sat delivery, and disable holidays here.
-    var beforeShowDay = function(day) {
-      var ymd = day.getFullYear() + "-" + (day.getMonth()+1) + "-" + day.getDate();
-      if ($.inArray(ymd, ["2016-12-24"]) >= 0) {
-        return [false, ""];
-      }
-      if ($.inArray(day.getDay(), [2, 4, 6]) >= 0) {
-        return [true, ""];
-      }
-      return [false, ""];
-    };
-
-    // Install date picker.
-    $("#datePicker").datepicker(
-      { 
-        minDate: +1, 
-        maxDate: '+2M',
-        beforeShowDay: beforeShowDay
-      }
-    );
-    
-    // Ensure delivery date is provided.
-    $(function() {
-      $('input[name="checkout"], input[name="goto_pp"], input[name="goto_gc"]').click(function() {
-        if ($('#datePicker').val() == '') {
-          alert("You must pick a delivery date");   
-          return false; 
-        }
-        else {
-          $(this).submit();
-        }
-      });
-    });
-  })();
-</script>
+<html>
+	<head>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+		<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css">
+	</head>
+	<body>
+		<div class="grid__item medium-up--one-half cart-note">
+		  <p>
+		    <label for="datePicker" class="cart-note__label small--text-center">Pick a delivery date:</label>
+		    <input id="datePicker" required type="text" name="attributes[date]" value="{{ cart.attributes.date }}" />
+		    <br>
+		    <input type="radio" name="attributes[location]" value="home">Home Delivery<br>
+		    <input type="radio" name="attributes[location]" value="mason">Mason's Cellar<br>
+		    <span style="display:block" class="instructions"
+		          >Tuesday and Thursday deliveries are 4-6pm. Saturday deliveries are 9am-12pm.</span>
+		  </p>
+		</div>
+		<script src="delivery-widget.js"></script>
+	</body>
+</html>
