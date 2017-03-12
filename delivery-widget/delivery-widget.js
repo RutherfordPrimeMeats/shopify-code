@@ -13,10 +13,15 @@
 	};
 
 	// Install date picker.
-	$('#datePicker').datepicker({
+	$('#deliveryDatePicker').datepicker({
 		minDate: +1,
 		maxDate: '+2M',
 		beforeShowDay: beforeShowDay
+	});
+	
+	$('#pickupDatePicker').datepicker({
+		minDate: +1,
+		maxDate: '+2M'
 	});
 
 	// Ensure delivery date is provided.
