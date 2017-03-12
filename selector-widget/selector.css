@@ -1,3 +1,7 @@
 .rpm-selectable-item, .rpm-selected-item {
 	cursor: pointer;
 }
+
+#rpm-selector > div {
+	float: left;
+}
