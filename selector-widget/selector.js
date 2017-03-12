@@ -1,13 +1,15 @@
 /*eslint-env browser, jquery*/
 (function() {
 	var possibleItems = [
-		'Chicken',
-		'Hamburger',
-		'Pork Chops',
-		'Filet Mignon',
-		'Shell Steaks',
-		'Flat Iron Steaks',
-		'Boneless Short Ribs',
+		'4 Flat Iron Steaks',
+		'4 Beef Burgers',
+		'2.5 lbs Thin Sliced Antibiotic-Free Chicken',
+		'2.5 lbs Antibiotic-Free Ground Turkey',
+		'4 Pork Chops',
+		'2 lbs Beef Cubes (for stews/ kebobs)',
+		'3.5 lb 8-Way Cut Up Chicken',
+		'2 lbs Pork Shoulder',
+		'2 lbs Pork Tenderloin',
 	];
 	
 	var resetSelectedItemText = function() {
