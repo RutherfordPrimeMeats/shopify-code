@@ -27,8 +27,20 @@
 	// Ensure delivery date is provided.
 	$(function() {
 		$('input[name="checkout"], input[name="goto_pp"], input[name="goto_gc"]').click(function() {
-			if ($('#datePicker').val() === '') {
-				alert('You must pick a delivery date');
+			var selectedType = $('input[name="attributes[location]"]:checked').val();
+			
+			if (!selectedType){
+				alert('Please pick a delivery location and time.');
+				return;
+			}
+			
+			var dateElt = $('#deliveryDatePicker');
+			if (selectedType === 'mason') {
+			  dateElt = $('#pickupDatePicker');
+			}
+			
+			if (!dateElt.val()) {
+				alert('Please choose a delivery date.');
 			} else {
 				$(this).submit();
 			}
