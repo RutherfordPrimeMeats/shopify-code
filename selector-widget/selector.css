@@ -2,6 +2,6 @@
 	cursor: pointer;
 }
 
-#rpm-selector > div {
+.rpm-selector > div {
 	float: left;
 }
