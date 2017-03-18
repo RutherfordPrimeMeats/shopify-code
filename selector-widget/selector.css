@@ -4,4 +4,5 @@
 
 .rpm-selector > div {
 	float: left;
+	margin: 0 30px;
 }
