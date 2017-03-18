@@ -16,7 +16,7 @@
 		var selectedItemsElt = $('#rpm-selector-selected');
 		var selectedText = [];
 		$.map(selectedItemsElt.children(), function(elt) {
-			selectedText.push($(elt).text());
+			selectedText.push($(elt).data('item'));
 		});
 		$('#rpm-selected-input').val(selectedText.join(', '));
 	};
@@ -27,7 +27,8 @@
 			return;
 		}
 
-		var selectedItem = $('<div class="rpm-selected-item">' + i + '</div>');
+		var selectedItem = $('<div class="rpm-selected-item">X ' + i + '</div>');
+		selectedItem.data('item', i);
 		selectedItem.click(function(e) {
 			$(e.target).remove();
 			resetSelectedItemText();
