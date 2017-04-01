@@ -2,17 +2,18 @@
 {{ '//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js' | script_tag }}
 {{ '//ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css' | stylesheet_tag }}
 
-<div class="grid__item medium-up--one-half cart-note">
+<div class="grid__item medium-up--one-half cart-note delivery-note">
   <p>
     <label for="datePicker" class="cart-note__label small--text-center">DELIVERY OR PICKUP OPTIONS:</label>
     <br>
     <input type="radio" name="attributes[location]" value="home">Deliver my order on date chosen here:<br>
     <input id="deliveryDatePicker" required type="text" name="attributes[delivery-date]" value="" /><br>
     <input type="radio" name="attributes[location]" value="mason">
-    I will pick up my order at<br>
-    Mason’s Cellar [23 Park Ave, Rutherford]<br>
-    between 4:30-9:30pm on:<br>
+      I will pick up my order at<br>
+Mason’s Cellar [23 Park Ave, Rutherford]<br>
+between 4:30-9:30pm on:<br>
     <input id="pickupDatePicker" required type="text" name="attributes[pickup-date]" value="" />
+    <input type="button" name="checkout">
   </p>
 </div>
 
