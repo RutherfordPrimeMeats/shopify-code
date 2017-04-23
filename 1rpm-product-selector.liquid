@@ -9,8 +9,8 @@
 
 <div class="rpm-selector">
   <div>
-    <span style="font-weight: bold">Stress less. Cook more.
-      Choose any 5 items from the list below:</span>
+    <span style="font-weight: bold">Stress less. Cook more.<br>
+      Click any 5 items from the list below:</span>
     <div id="rpm-selector-selectable"></div>
   </div>
   <div style="margin-top: 30px;">
@@ -27,7 +27,7 @@
 		'4 Beef Burgers',
 		'2.5 lbs Thin Sliced Antibiotic-Free Chicken',
 		'2.5 lbs Antibiotic-Free Ground Turkey',
-		'4 Pork Chops',
+		'4 Boneless Pork Chops',
 		'2 lbs Beef Cubes (for stews/ kebobs)',
 		'3.5 lb 8-Way Cut Up Chicken',
 		'2 lbs Pork Shoulder',
@@ -61,14 +61,14 @@
 	};
 	
 	$.map(possibleItems, function(i) {
-		var selectableItem = $('<div class="rpm-selectable-item">' + i + '</div>');
-		selectableItem.click(i, function(e) {
-			addToSelectedItems(e.data);
-		});
-		$('#rpm-selector-selectable').append(selectableItem);
+      var selectableItem = $('<div class="rpm-selectable-item">' + i + '</div>');
+      selectableItem.click(i, function(e) {
+        addToSelectedItems(e.data);
+      });
+      $('#rpm-selector-selectable').append(selectableItem);
 	});
 	
-  $('button').click(function() {
+  $('button[name="add"]').click(function() {
     var selectedItemsElt = $('#rpm-selector-selected');
     if (selectedItemsElt.children().length < 5) {
       alert('Please select five items (you may select duplicates).');
