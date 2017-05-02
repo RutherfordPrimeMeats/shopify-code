@@ -45,24 +45,36 @@ between 4:30-9:30pm on:<br>
 	// Ensure delivery date is provided.
 	$(function() {
 		$('input[name="checkout"], input[name="goto_pp"], input[name="goto_gc"]').click(function() {
-			var selectedType = $('input[name="attributes[location]"]:checked').val();
-			
-			if (!selectedType){
-				alert('Please pick a delivery location and time.');
-				return false;
-			}
-			
-			var dateElt = $('#deliveryDatePicker');
-			if (selectedType === 'mason') {
-			  dateElt = $('#pickupDatePicker');
-			}
-			
-			if (!dateElt.val()) {
-				alert('Please choose a delivery date.');
-                return false;
-			} else {
-				$(this).submit();
-			}
+          var selectedType = $('input[name="attributes[location]"]:checked').val();
+
+          if (!selectedType){
+            alert('Please pick a delivery location and time.');
+            return false;
+          }
+
+          var dateElt = $('#deliveryDatePicker');
+          if (selectedType === 'mason') {
+            dateElt = $('#pickupDatePicker');
+          }
+
+          if (!dateElt.val()) {
+            alert('Please choose a delivery date.');
+            return false;
+          }
+          
+          if (selectedType === 'home') {
+            if (!$('#deliveryAddress').val()) {
+              alert('Please provide your address for delivery.');
+              return false;
+            }
+          }
+          
+          if (selectedType === 'home') {
+            $('#pickupDatePicker').val('');
+          } else {
+            $('#deliveryDatePicker').val('');
+            $('#deliveryAddress').val('');
+          }
 		});
 	});
 })();
