@@ -10,7 +10,7 @@
 <div class="rpm-selector">
   <div>
     <span style="font-weight: bold">Stress less. Cook more.<br>
-      Click any 5 items from the list below:</span>
+      Select 5 different items by clicking below:</span>
     <div id="rpm-selector-selectable"></div>
   </div>
   <div style="margin-top: 30px;">
@@ -35,29 +35,39 @@
 	];
 	
 	var resetSelectedItemText = function() {
-		var selectedItemsElt = $('#rpm-selector-selected');
-		var selectedText = [];
-		$.map(selectedItemsElt.children(), function(elt) {
-			selectedText.push($(elt).data('item'));
-		});
-		$('#rpm-selected-input').val(selectedText.join(', '));
+      var selectedItemsElt = $('#rpm-selector-selected');
+      var selectedText = [];
+      $.map(selectedItemsElt.children(), function(elt) {
+        selectedText.push($(elt).data('item'));
+      });
+      $('#rpm-selected-input').val(selectedText.join(', '));
 	};
+   
+    var isItemSelected = function(i) {
+      var selectedItems = $('#rpm-selected-input').val().split(', ');
+      return selectedItems.indexOf(i) >= 0;
+    };
 	
 	var addToSelectedItems = function(i) {
-		var selectedItemsElt = $('#rpm-selector-selected');
-		if (selectedItemsElt.children().length >= 5) {
-			return;
-		}
+      var selectedItemsElt = $('#rpm-selector-selected');
+      if (selectedItemsElt.children().length >= 5) {
+        return;
+      }
+      
+      if (isItemSelected(i)) {
+        alert("Oops! Looks like you've already selected this item");
+        return;
+      }
 
-		var selectedItem = $('<div class="rpm-selected-item">X ' + i + '</div>');
-		selectedItem.data('item', i);
-		selectedItem.click(function(e) {
-			$(e.target).remove();
-			resetSelectedItemText();
-		});
-		selectedItemsElt.append(selectedItem);
-		
-		resetSelectedItemText();
+      var selectedItem = $('<div class="rpm-selected-item">X ' + i + '</div>');
+      selectedItem.data('item', i);
+      selectedItem.click(function(e) {
+        $(e.target).remove();
+        resetSelectedItemText();
+      });
+      selectedItemsElt.append(selectedItem);
+
+      resetSelectedItemText();
 	};
 	
 	$.map(possibleItems, function(i) {
@@ -71,7 +81,7 @@
   $('button[name="add"]').click(function() {
     var selectedItemsElt = $('#rpm-selector-selected');
     if (selectedItemsElt.children().length < 5) {
-      alert('Please select five items (you may select duplicates).');
+      alert('Please select five items.');
       return false;
     }
   });
