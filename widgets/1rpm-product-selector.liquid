@@ -22,19 +22,20 @@
 
 <script>
   (function() {
-	var possibleItems = [
-		'4 Flat Iron Steaks',
-		'4 Beef Burgers',
-		'2.5 lbs Thin Sliced Antibiotic-Free Chicken',
-		'2.5 lbs Antibiotic-Free Ground Turkey',
-		'4 Boneless Pork Chops',
-		'2 lbs Beef Cubes (for stews/ kebobs)',
-		'3.5 lb 8-Way Cut Up Chicken',
-		'2 lbs Pork Shoulder',
-		'2 lbs Pork Tenderloin',
+    var possibleItems = [
+      '4 Flat Iron Steaks',
+      '4 Beef Burgers',
+      '2.5 lbs Thin Sliced Antibiotic-Free Chicken',
+      '2.5 lbs Antibiotic-Free Ground Turkey',
+      '4 Boneless Pork Chops',
+      '2 lbs Beef Cubes (for stews/kebobs)',
+      '3.5 lb 8-Way Cut Up Chicken',
+      '2 lbs Pork Shoulder',
+      '2 lbs Pork Tenderloin',
+      '2 lbs Meatball/Meatloaf Blend'
 	];
-	
-	var resetSelectedItemText = function() {
+    
+    var resetSelectedItemText = function() {
       var selectedItemsElt = $('#rpm-selector-selected');
       var selectedText = [];
       $.map(selectedItemsElt.children(), function(elt) {
@@ -42,13 +43,13 @@
       });
       $('#rpm-selected-input').val(selectedText.join(', '));
 	};
-   
+
     var isItemSelected = function(i) {
       var selectedItems = $('#rpm-selected-input').val().split(', ');
       return selectedItems.indexOf(i) >= 0;
     };
-	
-	var addToSelectedItems = function(i) {
+    
+    var addToSelectedItems = function(i) {
       var selectedItemsElt = $('#rpm-selector-selected');
       if (selectedItemsElt.children().length >= 5) {
         return;
@@ -69,21 +70,21 @@
 
       resetSelectedItemText();
 	};
-	
-	$.map(possibleItems, function(i) {
+
+    $.map(possibleItems, function(i) {
       var selectableItem = $('<div class="rpm-selectable-item">' + i + '</div>');
       selectableItem.click(i, function(e) {
         addToSelectedItems(e.data);
       });
       $('#rpm-selector-selectable').append(selectableItem);
-	});
+  	});
 	
-  $('button[name="add"]').click(function() {
-    var selectedItemsElt = $('#rpm-selector-selected');
-    if (selectedItemsElt.children().length < 5) {
-      alert('Please select five items.');
-      return false;
-    }
-  });
-})();
+    $('button[name="add"]').click(function() {
+      var selectedItemsElt = $('#rpm-selector-selected');
+      if (selectedItemsElt.children().length < 5) {
+        alert('Please select five items.');
+        return false;
+      }
+    });
+  })();
 </script>
