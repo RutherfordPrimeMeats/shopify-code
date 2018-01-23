@@ -6,40 +6,62 @@
   <p>
     <label for="datePicker" class="cart-note__label small--text-center">DELIVERY OR PICKUP OPTIONS:</label>
     <br>
-    <input type="radio" name="attributes[location]" value="home"> Deliver my order on date chosen here:<br>
-    <input id="deliveryDatePicker" required type="text" name="attributes[delivery-date]" value="" /><br>
+    <input type="radio" name="attributes[location]" value="home">
+    Select an available delivery date:<br>
+    <input id="deliveryDatePicker" type="text" name="attributes[delivery-date]" readonly="readonly" value="" /><br>
+    My address is:<br>
+    <input type="text" id="deliveryAddress" rows="2" cols="50" name="attributes[delivery-address]"
+           style="width: 250px" placeholder="123 Home St, Rutherford"></input><br><br>
     <input type="radio" name="attributes[location]" value="mason">
-      I will pick up my order at<br>
-Mason’s Cellar [23 Park Ave, Rutherford]<br>
-between 4:30-9:30pm on:<br>
-    <input id="pickupDatePicker" required type="text" name="attributes[pickup-date]" value="" />
+      Select the date you'd like to pick up your order at <br>
+      Mason’s Cellar [23 Park Ave, Rutherford]<br>
+    <input id="pickupDatePicker" type="text" name="attributes[pickup-date]" readonly="readonly" value="" /><br>
+      <span style="font-size: 85%">
+        You can pick up between 4:30pm-9:30pm for weekday orders<br>
+        and 12:00pm-9:30pm for Saturday orders.
+      </span>
   </p>
 </div>
 
 <script>
 (function() {
 	// Only allow Tue/Thur/Sat delivery, and disable holidays here.
-	var beforeShowDay = function(day) {
-		var ymd = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate();
-		if ($.inArray(ymd, ['2016-12-24']) >= 0) {
+    // Use single digit values like '2017-5-29'.
+	var beforeShowDayDelivery = function(day) {
+        var ymd = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate();
+		if ($.inArray(ymd, ['2017-12-25']) >= 0) {
 			return [false, ''];
 		}
-		if ($.inArray(day.getDay(), [2, 4, 6]) >= 0) {
+		if ($.inArray(day.getDay(), [2, 4]) >= 0) {
 			return [true, ''];
 		}
 		return [false, ''];
 	};
+  
+  
+    // Allow pickup at Mason's on weekdays.
+    var beforeShowDayPickup = function(day) {
+      var ymd = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate();
+      if ($.inArray(ymd, ['2017-12-25']) >= 0) {
+        return [false, ''];
+      }
+      if ($.inArray(day.getDay(), [1, 2, 3, 4, 5, 6]) >= 0) {
+        return [true, ''];
+      }
+      return [false, ''];
+    };
 
 	// Install date picker.
 	$('#deliveryDatePicker').datepicker({
 		minDate: +2,
 		maxDate: '+2M',
-		beforeShowDay: beforeShowDay
+		beforeShowDay: beforeShowDayDelivery
 	});
 	
 	$('#pickupDatePicker').datepicker({
 		minDate: +2,
-		maxDate: '+2M'
+		maxDate: '+2M',
+        beforeShowDay: beforeShowDayPickup
 	});
 
 	// Ensure delivery date is provided.
