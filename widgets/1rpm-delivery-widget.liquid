@@ -6,6 +6,8 @@
   <p>
     <label for="datePicker" class="cart-note__label small--text-center">DELIVERY OR PICKUP OPTIONS:</label>
     <br>
+    <strong>Deliveries unavailable Wednesday the 15th until Saturday the 18th.</strong>
+    <br>
     <input type="radio" name="attributes[location]" value="home">
     Select an available delivery date:<br>
     <input id="deliveryDatePicker" type="text" name="attributes[delivery-date]" readonly="readonly" value="" /><br>
@@ -25,79 +27,89 @@
 
 <script>
 (function() {
-	// Only allow Tue/Thur/Sat delivery, and disable holidays here.
-    // Use single digit values like '2017-5-29'.
-	var beforeShowDayDelivery = function(day) {
-        var ymd = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate();
-		if ($.inArray(ymd, ['2017-12-25']) >= 0) {
-			return [false, ''];
-		}
-		if ($.inArray(day.getDay(), [2, 4]) >= 0) {
-			return [true, ''];
-		}
-		return [false, ''];
-	};
-  
-  
-    // Allow pickup at Mason's on weekdays.
-    var beforeShowDayPickup = function(day) {
-      var ymd = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate();
-      if ($.inArray(ymd, ['2017-12-25']) >= 0) {
-        return [false, ''];
-      }
-      if ($.inArray(day.getDay(), [1, 2, 3, 4, 5, 6]) >= 0) {
-        return [true, ''];
-      }
+  var isGlobalBlockedDay = function(ymd) {
+    return $.inArray(ymd, ['2018-8-15', '2018-8-16', '2018-8-17', '2018-8-18']) >= 0;
+  };
+
+  // Only allow Tue/Thur/Sat delivery, and disable holidays here.
+  // Use single digit values like '2017-5-29'.
+  var beforeShowDayDelivery = function(day) {
+    var ymd = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate();
+    if (isGlobalBlockedDay(ymd)) {
       return [false, ''];
-    };
+    }
+    if ($.inArray(ymd, ['2017-12-25']) >= 0) {
+      return [false, ''];
+    }
+    if ($.inArray(day.getDay(), [2, 4]) >= 0) {
+      return [true, ''];
+    }
+    return [false, ''];
+  };
 
-	// Install date picker.
-	$('#deliveryDatePicker').datepicker({
-		minDate: +2,
-		maxDate: '+2M',
-		beforeShowDay: beforeShowDayDelivery
-	});
-	
-	$('#pickupDatePicker').datepicker({
-		minDate: +2,
-		maxDate: '+2M',
-        beforeShowDay: beforeShowDayPickup
-	});
 
-	// Ensure delivery date is provided.
-	$(function() {
-		$('input[name="checkout"], input[name="goto_pp"], input[name="goto_gc"]').click(function() {
-          var selectedType = $('input[name="attributes[location]"]:checked').val();
+  // Allow pickup at Mason's on weekdays.
+  var beforeShowDayPickup = function(day) {
+    var ymd = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate();
+    if (isGlobalBlockedDay(ymd)) {
+      return [false, ''];
+    }
+    if ($.inArray(ymd, ['2017-12-25']) >= 0) {
+      return [false, ''];
+    }
+    if ($.inArray(day.getDay(), [1, 2, 3, 4, 5, 6]) >= 0) {
+      return [true, ''];
+    }
+    return [false, ''];
+  };
 
-          if (!selectedType){
-            alert('Please pick a delivery location and time.');
-            return false;
-          }
+  // Install date picker.
+  $('#deliveryDatePicker').datepicker({
+    minDate: +2,
+    maxDate: '+2M',
+    beforeShowDay: beforeShowDayDelivery
+  });
 
-          var dateElt = $('#deliveryDatePicker');
-          if (selectedType === 'mason') {
-            dateElt = $('#pickupDatePicker');
-          }
+  $('#pickupDatePicker').datepicker({
+    minDate: +2,
+    maxDate: '+2M',
+    beforeShowDay: beforeShowDayPickup
+  });
 
-          if (!dateElt.val()) {
-            alert('Please choose a delivery date.');
-            return false;
-          }
-          
-          if (selectedType === 'home') {
-            if (!$('#deliveryAddress').val()) {
-              alert('Please provide your address for delivery.');
-              return false;
-            }
-          }
-          
-          if (selectedType === 'home') {
-            $('#pickupDatePicker').val('');
-          } else {
-            $('#deliveryDatePicker').val('');
-            $('#deliveryAddress').val('');
-          }
-		});
-	});
+  // Ensure delivery date is provided.
+  $(function() {
+    $('input[name="checkout"], input[name="goto_pp"], input[name="goto_gc"]').click(function() {
+      var selectedType = $('input[name="attributes[location]"]:checked').val();
+
+      if (!selectedType) {
+        alert('Please pick a delivery location and time.');
+        return false;
+      }
+
+      var dateElt = $('#deliveryDatePicker');
+      if (selectedType === 'mason') {
+        dateElt = $('#pickupDatePicker');
+      }
+
+      if (!dateElt.val()) {
+        alert('Please choose a delivery date.');
+        return false;
+      }
+
+      if (selectedType === 'home') {
+        if (!$('#deliveryAddress').val()) {
+          alert('Please provide your address for delivery.');
+          return false;
+        }
+      }
+
+      if (selectedType === 'home') {
+        $('#pickupDatePicker').val('');
+      } else {
+        $('#deliveryDatePicker').val('');
+        $('#deliveryAddress').val('');
+      }
+    });
+  });
 })();
 </script>
