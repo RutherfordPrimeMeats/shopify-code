@@ -1,4 +1,4 @@
-{{ '//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js' | script_tag }}
+{{ '//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js' | script_tag }}
 
 <style>
 .rpm-selectable-item, .rpm-selected-item {
@@ -19,6 +19,7 @@
   </div>
 </div>
 <input type="hidden" name="properties[Selected]" id="rpm-selected-input"></input>
+<input type="hidden" name="id" id="rpm-product-select-id"></input>
 
 <script>
 (function() {
@@ -34,10 +35,12 @@
     '2 lbs Pork Tenderloin',
     '2 lbs Meatball/Meatloaf Blend',
     '1 lbs Boneless Short Ribs (great for soups and stews)',
-    '4 Salmon Steaks 8 oz each',
+    '4 Salmon Steaks 8 oz each (+ $10)',
     '4 Antibiotic-Free Chicken Burgers',
     '4 Antibiotic-Free Turkey Burgers'
   ];
+  var productObj = {{product|json}};
+
 
   var resetSelectedItemText = function() {
     var selectedItemsElt = $('#rpm-selector-selected');
@@ -46,6 +49,19 @@
       selectedText.push($(elt).data('item'));
     });
     $('#rpm-selected-input').val(selectedText.join(', '));
+    
+    var variant = selectedText.join(', ').indexOf('Salmon Steaks') >= 0 ? "Yes" : "No";
+    if (variant == "Yes") {
+      $("#ProductPrice-1rpm-product-selector-template").text("$65.00");
+    } else {
+      $("#ProductPrice-1rpm-product-selector-template").text("$55.00");
+    }
+    for (var i=0; i < productObj.variants.length; i++) {
+      if (productObj.variants[i].title == variant) {
+        $("#rpm-product-select-id").val(productObj.variants[i].id);
+      }
+    }
+    
   };
 
   var isItemSelected = function(i) {
