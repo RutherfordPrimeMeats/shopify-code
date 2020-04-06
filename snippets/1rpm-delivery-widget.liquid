@@ -17,8 +17,8 @@
       Mason’s Cellar [32 Ames Ave, Rutherford]<br>
     <input id="pickupDatePicker" type="text" name="attributes[pickup-date]" readonly="readonly" value="" /><br>
       <span style="font-size: 85%">
-        You can pick up between 4:30pm-9:30pm for weekday orders<br>
-        and 12:00pm-9:30pm for Saturday orders.
+        You can pick up between 4:30pm-8pm for weekday orders<br>
+        and 12:00pm-8pm for Saturday orders unless curfews dictate otherwise.
       </span>
   </p>
 </div>
@@ -29,21 +29,21 @@
     return $.inArray(ymd, ['2018-8-15', '2018-8-16', '2018-8-17', '2018-8-18']) >= 0;
   };
 
-  // Only allow Tue/Thur/Sat delivery, and disable holidays here.
+  // Only allow Tue/Wed/Thur delivery, and disable holidays here.
   // Use single digit values like '2017-5-29'.
   var beforeShowDayDelivery = function(day) {
     var ymd = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate();
     if (isGlobalBlockedDay(ymd)) {
       return [false, ''];
     }
-    if ($.inArray(day.getDay(), [2, 4]) >= 0) {
+    if ($.inArray(day.getDay(), [2, 3, 4]) >= 0) {
       return [true, ''];
     }
     return [false, ''];
   };
 
 
-  // Allow pickup at Mason's on weekdays.
+  // Allow pickup at Mason's on weekdays and Saturday.
   var beforeShowDayPickup = function(day) {
     var ymd = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate();
     if (isGlobalBlockedDay(ymd)) {
