@@ -36,6 +36,17 @@ type Orders struct {
 	Collection []Order `json:"orders"`
 }
 
+func main() {
+	cfg := readConfig()
+
+	f := logFile()
+	log.SetOutput(f)
+	defer f.Close()
+
+	orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
+	disableDates(cfg, datesToDisable(orders))
+}
+
 func logFile() *os.File {
 	os.Mkdir("logs", 0755)
 	logPath := fmt.Sprintf("logs/%d.log", time.Now().Unix())
@@ -46,15 +57,7 @@ func logFile() *os.File {
 	return f
 }
 
-func main() {
-	cfg := readConfig()
-
-	f := logFile()
-	log.SetOutput(f)
-	defer f.Close()
-
-	orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
-
+func datesToDisable(orders Orders) map[string]int {
 	dates := map[string]int{}
 	for _, order := range orders.Collection {
 		for _, note := range order.NoteAttributes {
@@ -63,7 +66,7 @@ func main() {
 			}
 		}
 	}
-	disableDates(cfg, dates)
+	return dates
 }
 
 func disableDates(cfg Config, dates map[string]int) {
