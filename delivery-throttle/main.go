@@ -63,12 +63,7 @@ func main() {
 }
 
 func disableDates(cfg Config, dates map[string]int) {
-	assetTmpl := `{
-  "asset": {
-    "key": "assets/sold-out.js",
-    "value": "%s"
-  }
-}`
+	assetTmpl := `{"asset": {"key": "assets/sold-out.js", "value": "%s"}}`
 
 	asset := "window.SOLD_OUT_DATES=["
 	sod := []string{}
