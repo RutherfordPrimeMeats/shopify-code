@@ -36,18 +36,22 @@ type Orders struct {
 	Collection []Order `json:"orders"`
 }
 
-func main() {
-	cfg := readConfig()
-
+func logFile() *os.File {
 	os.Mkdir("logs", 0755)
 	logPath := fmt.Sprintf("logs/%d.log", time.Now().Unix())
 	f, err := os.OpenFile(logPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
+	return f
+}
 
+func main() {
+	cfg := readConfig()
+
+	f := logFile()
 	log.SetOutput(f)
+	defer f.Close()
 
 	orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
 
