@@ -72,6 +72,9 @@ func disableDates(cfg config.Config, dates map[string]int) {
 	asset := "window.SOLD_OUT_DATES=["
 	sod := []string{}
 	for date, count := range dates {
+		if count >= cfg.WarnOrders && count < cfg.MaxOrders {
+			log.Printf("date %s has %d orders, close to selling out\n", date, count)
+		}
 		if count >= cfg.MaxOrders {
 			log.Printf("date %s has %d orders, disabling\n", date, count)
 			f := strings.FieldsFunc(date, func(r rune) bool { return r == '/' })
