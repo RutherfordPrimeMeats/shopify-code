@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -35,7 +36,8 @@ func main() {
 	cfg := config.New("config.json")
 
 	f := logFile()
-	log.SetOutput(f)
+	mw := io.MultiWriter(os.Stdout, f)
+	log.SetOutput(mw)
 	defer f.Close()
 
 	orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
