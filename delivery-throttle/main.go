@@ -9,14 +9,9 @@ import (
 	"os"
 	"strings"
 	"time"
-)
 
-// Config is the main binary configuration.
-type Config struct {
-	APISecret string // https://key:password@
-	BaseURL   string
-	MaxOrders int
-}
+	"github.com/RutherfordPrimeMeats/shopify-code/delivery-throttle/config"
+)
 
 // NoteAttribute is a k/v pair on an order.
 type NoteAttribute struct {
@@ -37,7 +32,7 @@ type Orders struct {
 }
 
 func main() {
-	cfg := readConfig()
+	cfg := config.New("config.json")
 
 	f := logFile()
 	log.SetOutput(f)
@@ -69,7 +64,7 @@ func datesToDisable(orders Orders) map[string]int {
 	return dates
 }
 
-func disableDates(cfg Config, dates map[string]int) {
+func disableDates(cfg config.Config, dates map[string]int) {
 	assetTmpl := `{"asset": {"key": "assets/sold-out.js", "value": "%s"}}`
 
 	asset := "window.SOLD_OUT_DATES=["
@@ -118,7 +113,7 @@ func nextURL(res *http.Response) string {
 	return ""
 }
 
-func getOrdersFromURL(cfg Config, url string) Orders {
+func getOrdersFromURL(cfg config.Config, url string) Orders {
 	url = strings.Replace(url, "https://", cfg.APISecret, 1)
 
 	c := http.DefaultClient
@@ -145,24 +140,4 @@ func getOrdersFromURL(cfg Config, url string) Orders {
 		orders.Collection = append(orders.Collection, oo.Collection...)
 	}
 	return orders
-}
-
-func readConfig() Config {
-	f, err := os.Open("config.json")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-
-	bytes, err := ioutil.ReadAll(f)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var cfg Config
-	err = json.Unmarshal(bytes, &cfg)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return cfg
 }
