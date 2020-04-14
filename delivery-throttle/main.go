@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/RutherfordPrimeMeats/shopify-code/delivery-throttle/config"
+	"github.com/RutherfordPrimeMeats/shopify-code/delivery-throttle/datetest"
 )
 
 // NoteAttribute is a k/v pair on an order.
@@ -72,6 +73,9 @@ func disableDates(cfg config.Config, dates map[string]int) {
 	asset := "window.SOLD_OUT_DATES=["
 	sod := []string{}
 	for date, count := range dates {
+		if datetest.BeforeNow(date) {
+			continue
+		}
 		if count >= cfg.WarnOrders && count < cfg.MaxOrders {
 			log.Printf("date %s has %d orders, close to selling out\n", date, count)
 		}
