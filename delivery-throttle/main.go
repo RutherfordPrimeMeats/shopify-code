@@ -76,15 +76,17 @@ func disableDates(cfg config.Config, dates map[string]int) {
 		if datetest.BeforeNow(date) {
 			continue
 		}
-		if count >= cfg.WarnOrders && count < cfg.MaxOrders {
-			log.Printf("date %s has %d orders, close to selling out\n", date, count)
-		}
-		if count >= cfg.MaxOrders {
+		switch {
+		case count >= cfg.MaxOrders:
 			log.Printf("date %s has %d orders, disabling\n", date, count)
 			f := strings.FieldsFunc(date, func(r rune) bool { return r == '/' })
 			d := f[2] + "-" + strings.TrimPrefix(f[0], "0") + "-" + strings.TrimPrefix(f[1], "0")
 			d = "'" + d + "'"
 			sod = append(sod, d)
+		case count >= cfg.WarnOrders:
+			log.Printf("date %s has %d orders, close to selling out\n", date, count)
+		default:
+			log.Printf("date %s has %d orders\n", date, count)
 		}
 	}
 	asset += strings.Join(sod, ", ")
