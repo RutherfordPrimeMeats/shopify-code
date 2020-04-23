@@ -29,18 +29,18 @@
     var val = $(this).val();
     $("#deliveryAddress").val("");
     if (val == "mason") {
-      $("#deliveryAddress").val("32 Ames Ave, (Mason's)");
+      $("#deliveryAddress").val("32 Ames Ave - (Mason's)");
     }
     $("#deliveryDatePicker").val("");
   });
   
+  // You can disable holidays here, use single digit values like '2017-5-29'.
   var isGlobalBlockedDay = function(ymd) {
     if ($.inArray(ymd, window.SOLD_OUT_DATES) >= 0) { return true; }
-    return $.inArray(ymd, ['2018-8-15', '2018-8-16', '2018-8-17', '2018-8-18']) >= 0;
+    return $.inArray(ymd, ['2018-8-15']) >= 0;
   };
     
-  // Only allow Tue/Wed/Thur delivery, and disable holidays here.
-  // Use single digit values like '2017-5-29'.
+  // Only allow Tue/Wed/Thur delivery, Mason's all days except Sunday.
   var beforeShowDay = function(day) {
     var ymd = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate();
     if (isGlobalBlockedDay(ymd)) {
