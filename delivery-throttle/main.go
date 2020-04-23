@@ -72,6 +72,9 @@ func disableDates(cfg config.Config, dates map[string]int) {
 
 	asset := "window.SOLD_OUT_DATES=["
 	sod := []string{}
+	for _, date := range cfg.BlockedDays {
+		sod = append(sod, "'"+date+"'")
+	}
 	for date, count := range dates {
 		if datetest.BeforeNow(date) {
 			continue

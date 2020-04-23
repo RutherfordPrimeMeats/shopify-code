@@ -9,10 +9,11 @@ import (
 
 // Config is the main binary configuration.
 type Config struct {
-	APISecret  string // https://key:password@
-	BaseURL    string
-	MaxOrders  int
-	WarnOrders int
+	APISecret   string // https://key:password@
+	BaseURL     string
+	BlockedDays []string
+	MaxOrders   int
+	WarnOrders  int
 }
 
 // New returns a Config from a json file at the provided path.
