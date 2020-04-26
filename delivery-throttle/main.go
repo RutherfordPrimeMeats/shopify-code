@@ -46,8 +46,10 @@ func main() {
 }
 
 func logFile() *os.File {
+	date := strings.Fields(time.Now().String())[0]
 	os.Mkdir("logs", 0755)
-	logPath := fmt.Sprintf("logs/%d.log", time.Now().Unix())
+	os.Mkdir(fmt.Sprintf("logs/%s", date), 0755)
+	logPath := fmt.Sprintf("logs/%s/%d.log", date, time.Now().Unix())
 	f, err := os.OpenFile(logPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		log.Fatal(err)
