@@ -34,13 +34,12 @@ type Orders struct {
 }
 
 func main() {
-	cfg := config.New("config.json")
-
 	f := logFile()
 	mw := io.MultiWriter(os.Stdout, f)
 	log.SetOutput(mw)
 	defer f.Close()
 
+	cfg := config.New("config.json")
 	orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
 	disableDates(cfg, datesToDisable(orders))
 }
