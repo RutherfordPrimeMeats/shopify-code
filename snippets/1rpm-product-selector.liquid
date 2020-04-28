@@ -10,7 +10,7 @@
 <div class="rpm-selector">
   <div>
     <span style="font-weight: bold">
-      *** Please note due to the cost, the price for this package is $65 if you include salmon.
+      *** Please note due to the cost, the price for this package will increase if you select premium items below.
     </span>
   </div>
   <div>
@@ -29,7 +29,6 @@
 <script>
 (function() {
   var possibleItems = [
-    '4 Flat Iron Steaks',
     '4 Beef Burgers',
     '2 lbs Thin Sliced Antibiotic-Free Chicken',
     '2 lbs Antibiotic-Free Ground Turkey',
@@ -40,8 +39,11 @@
     '2 lbs Pork Tenderloin',
     '2 lbs Meatball/Meatloaf Blend',
     '1 lbs Boneless Short Ribs (great for soups and stews)',
-    '4 Salmon Steaks 4 oz each (+ $12)',
-    '4 Antibiotic-Free Turkey Burgers'
+    '2 lbs Boneless Chicken Thighs',
+    '2 lbs Whole Chicken Breast',
+    '4 Antibiotic-Free Turkey Burgers',
+    '4 Salmon Steaks 4 oz each (premium)',
+    '4 Flat Iron Steaks (premium)'
   ];
   var productObj = {{product|json}};
 
@@ -54,9 +56,11 @@
     });
     $('#rpm-selected-input').val(selectedText.join(', '));
     
-    var variant = selectedText.join(', ').indexOf('Salmon Steaks') >= 0 ? "Yes" : "No";
-    if (variant == "Yes") {
-      $("#ProductPrice-1rpm-product-selector-template").text("$65.00");
+    var variant = '' + (selectedText.join(', ').match(/premium/g) || []).length;
+    if (variant == "2") {
+      $("#ProductPrice-1rpm-product-selector-template").text("$79.00");
+    } else if (variant == "1") {
+      $("#ProductPrice-1rpm-product-selector-template").text("$67.00");
     } else {
       $("#ProductPrice-1rpm-product-selector-template").text("$55.00");
     }
@@ -65,7 +69,6 @@
         $("#rpm-product-select-id").val(productObj.variants[i].id);
       }
     }
-    
   };
 
   var isItemSelected = function(i) {
