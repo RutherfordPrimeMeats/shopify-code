@@ -40,6 +40,7 @@ type LineItem struct {
 // Order represents a single order.
 type Order struct {
 	ID             int             `json:"id"`
+	Name           string          `json:"name"`
 	CreatedAt      string          `json:"created_at"`
 	LineItems      []LineItem      `json:"line_items"`
 	NoteAttributes []NoteAttribute `json:"note_attributes"`
