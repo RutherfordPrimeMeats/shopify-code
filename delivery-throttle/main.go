@@ -96,6 +96,10 @@ func storeOrders(cfg config.Config, orders Orders) {
 	w := oh.NewWriter(ctx)
 	w.Write([]byte("window._ORDER_DATA="))
 	w.Write(od)
+	date := fmt.Sprintf(
+		";\nwindow._GEN_DATE='%s';",
+		time.Now().Format("Mon, 2 Jan 2006 15:04:05 MST"))
+	w.Write([]byte(date))
 	w.Close()
 
 	oh.Update(ctx, storage.ObjectAttrsToUpdate{CacheControl: "no-cache, max-age:0"})
