@@ -12,6 +12,7 @@ type Config struct {
 	APISecret   string // https://key:password@
 	BaseURL     string
 	BlockedDays []string
+	GCPKeyFile  string
 	MaxOrders   int
 	WarnOrders  int
 }

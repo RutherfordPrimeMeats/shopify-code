@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -11,8 +12,10 @@ import (
 	"strings"
 	"time"
 
+	"cloud.google.com/go/storage"
 	"github.com/RutherfordPrimeMeats/shopify-code/delivery-throttle/config"
 	"github.com/RutherfordPrimeMeats/shopify-code/delivery-throttle/datetest"
+	"google.golang.org/api/option"
 )
 
 // NoteAttribute is a k/v pair on an order.
@@ -21,11 +24,19 @@ type NoteAttribute struct {
 	Value string `json:"value"`
 }
 
+// LineItem is the products in the order.
+type LineItem struct {
+	Title    string `json:"title"`
+	Quantity int    `json:"quantity"`
+}
+
 // Order represents a single order.
 type Order struct {
 	ID             int             `json:"id"`
 	CreatedAt      string          `json:"created_at"`
+	LineItems      []LineItem      `json:"line_items"`
 	NoteAttributes []NoteAttribute `json:"note_attributes"`
+	TotalPrice     string          `json:"total_price"`
 }
 
 // Orders are all orders returned from the API.
@@ -42,6 +53,7 @@ func main() {
 	cfg := config.New("config.json")
 	orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
 	disableDates(cfg, datesToDisable(orders))
+	storeOrders(cfg, orders)
 }
 
 func logFile() *os.File {
@@ -66,6 +78,28 @@ func datesToDisable(orders Orders) map[string]int {
 		}
 	}
 	return dates
+}
+
+func storeOrders(cfg config.Config, orders Orders) {
+	od, err := json.Marshal(orders)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ctx := context.Background()
+	client, err := storage.NewClient(ctx, option.WithCredentialsFile(cfg.GCPKeyFile))
+	if err != nil {
+		log.Fatal(err)
+	}
+	bh := client.Bucket("rutherford-prime-meats-07070")
+	oh := bh.Object("orders/order-data.json")
+	w := oh.NewWriter(ctx)
+	w.Write([]byte("window._ORDER_DATA="))
+	w.Write(od)
+	w.Close()
+
+	oh.Update(ctx, storage.ObjectAttrsToUpdate{CacheControl: "no-cache, max-age:0"})
+	oh.ACL().Set(ctx, storage.AllUsers, storage.RoleReader)
 }
 
 func disableDates(cfg config.Config, dates map[string]int) {
@@ -97,11 +131,13 @@ func disableDates(cfg config.Config, dates map[string]int) {
 	asset += "];"
 
 	payload := fmt.Sprintf(assetTmpl, asset)
+	log.Printf("Putting: %s\n", payload)
+	putAsset(cfg, payload)
+}
 
+func putAsset(cfg config.Config, payload string) {
 	url := cfg.BaseURL + "/themes/155701522/assets.json"
 	url = strings.Replace(url, "https://", cfg.APISecret, 1)
-
-	log.Printf("Putting: %s\n", payload)
 
 	c := http.DefaultClient
 	req, err := http.NewRequest(http.MethodPut, url, strings.NewReader(payload))
