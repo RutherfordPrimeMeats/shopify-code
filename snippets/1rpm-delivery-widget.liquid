@@ -11,7 +11,9 @@
     Mason's Cellar: <input type="radio" name="attributes[location]" value="mason" required>
     <br>
     Select an available delivery date:<br>
-    <input id="deliveryDatePicker" type="text" name="attributes[delivery-date]"  value="" required /><br>
+    <input id="deliveryDatePicker" type="text" name="attributes[delivery-date]"  value=""
+           title="The mm/dd/yyyy of the requested delivery. Please select a date from the pop-up calendar."
+           pattern="\d\d\/\d\d\/\d\d\d\d" required /><br>
     My address is:<br>
     <input type="text" id="deliveryAddress" rows="2" cols="50" name="attributes[delivery-address]"
            style="width: 250px" placeholder="123 Home St, Rutherford" required></input><br><br>
