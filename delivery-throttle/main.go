@@ -24,10 +24,17 @@ type NoteAttribute struct {
 	Value string `json:"value"`
 }
 
+// Properties is k/v of a line item.
+type Properties struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
 // LineItem is the products in the order.
 type LineItem struct {
-	Title    string `json:"title"`
-	Quantity int    `json:"quantity"`
+	Title      string       `json:"title"`
+	Quantity   int          `json:"quantity"`
+	Properties []Properties `json:"properties"`
 }
 
 // Order represents a single order.
@@ -92,15 +99,18 @@ func storeOrders(cfg config.Config, orders Orders) {
 		log.Fatal(err)
 	}
 	bh := client.Bucket("rutherford-prime-meats-07070")
-	oh := bh.Object("orders/order-data.json")
+	oh := bh.Object("orders/order-data.js")
 	w := oh.NewWriter(ctx)
+
 	w.Write([]byte("window._ORDER_DATA="))
 	w.Write(od)
 	date := fmt.Sprintf(
-		";\nwindow._GEN_DATE='%s';",
+		";\nwindow._GEN_DATE='%s';\n",
 		time.Now().Format("Mon, 2 Jan 2006 15:04:05 MST"))
 	w.Write([]byte(date))
-	w.Close()
+	if err := w.Close(); err != nil {
+		log.Fatal(err)
+	}
 
 	oh.Update(ctx, storage.ObjectAttrsToUpdate{CacheControl: "no-cache, max-age:0"})
 	oh.ACL().Set(ctx, storage.AllUsers, storage.RoleReader)
