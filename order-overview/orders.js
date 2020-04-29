@@ -5,7 +5,7 @@ var getAllDates = function() {
             if (attr.name=="pickup-date" || attr.name=="delivery-date") {
                 dates.add(attr.value);
             }
-        })
+        });
     });
     return dates;
 };
@@ -16,13 +16,13 @@ let getFutureDates = function() {
     let yesterday = new Date((new Date()) - 86400000);
     dates.forEach(date => {
         let split = date.split('/');
-        let f = Date.parse(split[2] + '-' + split[0] + '-' + split[1])
+        let f = Date.parse(split[2] + '-' + split[0] + '-' + split[1]);
         if (f >= yesterday) {
-            futureDates.push(date)
+            futureDates.push(date);
         }
     });
     return futureDates;
-}
+};
 
 let getOrdersForDate = function(date) {
     let orders = [];
@@ -33,7 +33,7 @@ let getOrdersForDate = function(date) {
                     orders.push(order);
                 }
             }
-        })
+        });
     });
     return orders;
 };
@@ -51,9 +51,9 @@ let getProductsForOrders = function(orders) {
                 });
             }
         });
-    })
+    });
     return products;
-}
+};
 
 let displayProducts = function (products) {
     $("#products").html('');
@@ -61,7 +61,7 @@ let displayProducts = function (products) {
     $("#products").append(table);
     
     let names = [];
-    $.each(products, product => { names.push(product) });
+    $.each(products, product => { names.push(product); });
     names.sort();
     names.map(name => {
         let row = $('<tr><td>'+name+'</td><td>'+products[name]+'</td></tr>');
@@ -86,7 +86,7 @@ let ready = function() {
             .append($("<option></option>")
                        .attr("value", date)
                        .text(date));
-    })
+    });
     $('#date_picker').change(switchDate);
     $("#last_updated").text(window._GEN_DATE);
 };
