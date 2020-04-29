@@ -1,3 +1,11 @@
+# config data, stores secret, refer to config/config.go
 config.json
+
+# binary
 delivery-throttle
+
+# development logs
 logs
+
+# order data stored in GCS
+order-data.js
