@@ -6,6 +6,3 @@ delivery-throttle
 
 # development logs
 logs
-
-# order data stored in GCS
-order-data.js
