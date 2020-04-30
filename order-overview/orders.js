@@ -55,7 +55,7 @@ let getProductsForOrders = function(orders) {
     return products;
 };
 
-let displayProducts = function (products) {
+let displayProducts = function(products) {
     $("#products").html('');
     let table = $("<table><thead><tr><th>Product</th><th>Quantity</th></tr></thead><tbody></tbody></table>");
     $("#products").append(table);
@@ -69,14 +69,77 @@ let displayProducts = function (products) {
     });
 };
 
+let getDeliveryByType = function(orders, type) {
+    let ret = [];
+    orders.map(order => {
+        order.note_attributes.map(attr => {
+            if (attr.name == 'location' && attr.value == type) {
+                ret.push(order);
+            }
+        });
+    });
+    return ret;
+};
+
+let getDeliveryAddress = function(order) {
+    let ret = '';
+    order.note_attributes.map(attr => {
+        if (attr.name == 'delivery-address') {
+            ret = attr.value;
+        }
+    });
+    return ret;
+};
+
+let getLineItemHTML = function(order) {
+    let items = [];
+    order.line_items.map(line => {
+        let text = line.title;
+        if (text == '5 for $55 Survival Package') {
+            text += `<div class="package">${line.properties[0].value}</span>`;
+        }
+        items.push(`<li>${text}</li>`);
+    });
+    return `<ul>${items.join('')}</ul>`;
+};
+
+let getOrdersByType = function(orders, type) {
+    orders = getDeliveryByType(orders, type);
+    if (orders.length == 0) {
+        return;
+    }
+    let ret = $('<table><thead><tr><th>ID</th><th>Customer</th><th>Products</th><th>Address / Note</th></tr></thead><tbody></tbody></table>');
+    orders.map(order => {
+        var row = $('<tr></tr>');
+        row.append($(`<td>${order.name}</td>`));
+        row.append($(`<td>${order.customer.first_name} ${order.customer.last_name}</td>`));
+        row.append($(`<td>${getLineItemHTML(order)}</td>`));
+        row.append($(`<td><div>${getDeliveryAddress(order)}</div><div class="note">${order.note}</div></td>`));
+        ret.append(row);
+    });
+    return ret;
+};
+
+let displayOrders = function(orders) {
+    $("#orders").html('');
+    let deliveries = getOrdersByType(orders, 'home');
+    if (deliveries) {
+        $("#orders").append($('<h2>Deliveries</h2>'));
+        $("#orders").append(deliveries);
+    }
+    let masons = getOrdersByType(orders, 'mason');
+    if (masons) {
+        $("#orders").append($('<h2>Mason\'s</h2>'));
+        $("#orders").append(masons);
+    }
+};
+
 let switchDate = function() {
     let date = $(this).val();
-    console.log(date);
     let orders = getOrdersForDate(date);
-    console.log(orders);
     let products = getProductsForOrders(orders);
-    console.log(products);
     displayProducts(products);
+    displayOrders(orders);
 };
 
 let ready = function() {

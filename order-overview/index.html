@@ -14,11 +14,19 @@
     <!-- Bootstrap core CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      #products tbody tr:nth-child(odd) {
+      tbody tr:nth-child(odd) {
         background-color: lightgray;
       }
-      #products td {
+      table, tr, td {
+        border: 1px solid black;
         padding: 0.2em;
+      }
+      .package {
+        font-size: 0.8em;
+      }
+      .note {
+        font-size: 0.8em;
+        font-style: italic;
       }
     </style>
   </head>
@@ -33,6 +41,7 @@
          individual items in the package are included as their own line items.</p>
       <p>Pick a date: <select id="date_picker"><option></option></select></p>
       <div id="products"></div>
+      <div id="orders"></div>
     </main>
 
   </body>
