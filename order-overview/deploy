@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# If necessary, auth with docker run -ti --name gcloud-config gcr.io/google.com/cloudsdktool/cloud-sdk gcloud auth login
+
+docker run --rm -v `pwd`:/deploy --volumes-from gcloud-config \
+  gcr.io/google.com/cloudsdktool/cloud-sdk gsutil \
+  cp /deploy/orders.js /deploy/index.html gs://rutherford-prime-meats-07070/orders/
+
+docker run --rm -v `pwd`:/deploy --volumes-from gcloud-config \
+  gcr.io/google.com/cloudsdktool/cloud-sdk gsutil \
+  acl ch -u AllUsers:R gs://rutherford-prime-meats-07070/orders/*
