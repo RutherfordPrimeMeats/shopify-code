@@ -37,14 +37,22 @@ type LineItem struct {
 	Properties []Properties `json:"properties"`
 }
 
+// Customer is the person who created the order.
+type Customer struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+}
+
 // Order represents a single order.
 type Order struct {
 	ID             int             `json:"id"`
 	Name           string          `json:"name"`
+	Note           string          `json:"note"`
 	CreatedAt      string          `json:"created_at"`
 	LineItems      []LineItem      `json:"line_items"`
 	NoteAttributes []NoteAttribute `json:"note_attributes"`
 	TotalPrice     string          `json:"total_price"`
+	Customer       Customer        `json:"customer"`
 }
 
 // Orders are all orders returned from the API.
