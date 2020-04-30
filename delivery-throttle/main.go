@@ -51,7 +51,6 @@ type Order struct {
 	CreatedAt      string          `json:"created_at"`
 	LineItems      []LineItem      `json:"line_items"`
 	NoteAttributes []NoteAttribute `json:"note_attributes"`
-	TotalPrice     string          `json:"total_price"`
 	Customer       Customer        `json:"customer"`
 }
 
