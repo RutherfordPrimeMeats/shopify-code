@@ -4,6 +4,7 @@
 
 docker run --rm -v `pwd`:/deploy --volumes-from gcloud-config \
   gcr.io/google.com/cloudsdktool/cloud-sdk gsutil \
+  -h "Cache-Control:no-cache, max-age:0" \
   cp /deploy/orders.js /deploy/index.html gs://rutherford-prime-meats-07070/orders/
 
 docker run --rm -v `pwd`:/deploy --volumes-from gcloud-config \
