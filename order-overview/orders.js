@@ -1,4 +1,6 @@
-var getAllDates = function() {
+$(document).ready(_ => {
+
+let getAllDates = function() {
     let dates = new Set();
     window._ORDER_DATA.orders.map(order => {
         order.note_attributes.map(attr => {
@@ -57,7 +59,8 @@ let getProductsForOrders = function(orders) {
 
 let displayProducts = function(products) {
     $("#products").html('');
-    let table = $("<table><thead><tr><th>Product</th><th>Quantity</th></tr></thead><tbody></tbody></table>");
+    let table = $(`<table><thead><tr><th>Product</th><th>Quantity</th>
+        </tr></thead><tbody></tbody></table>`);
     $("#products").append(table);
     
     let names = [];
@@ -108,13 +111,15 @@ let getOrdersByType = function(orders, type) {
     if (orders.length == 0) {
         return;
     }
-    let ret = $('<table><thead><tr><th>ID</th><th>Customer</th><th>Products</th><th>Address / Note</th></tr></thead><tbody></tbody></table>');
+    let ret = $(`<table><thead><tr><th>ID</th><th>Customer</th><th>Products</th>
+        <th>Address / Note</th></tr></thead><tbody></tbody></table>`);
     orders.map(order => {
-        var row = $('<tr></tr>');
+        let row = $('<tr></tr>');
         row.append($(`<td>${order.name}</td>`));
         row.append($(`<td>${order.customer.first_name} ${order.customer.last_name}</td>`));
         row.append($(`<td>${getLineItemHTML(order)}</td>`));
-        row.append($(`<td><div>${getDeliveryAddress(order)}</div><div class="note">${order.note}</div></td>`));
+        row.append($(`<td><div>${getDeliveryAddress(order)}</div>
+            <div class="note">${order.note}</div></td>`));
         ret.append(row);
     });
     return ret;
@@ -142,16 +147,14 @@ let switchDate = function() {
     displayOrders(orders);
 };
 
-let ready = function() {
-    let futureDates = getFutureDates().sort();
-    $.each(futureDates, function(idx, date) {
-        $('#date_picker')
-            .append($("<option></option>")
-                       .attr("value", date)
-                       .text(date));
-    });
-    $('#date_picker').change(switchDate);
-    $("#last_updated").text(window._GEN_DATE);
-};
+let futureDates = getFutureDates().sort();
+$.each(futureDates, function(idx, date) {
+    $('#date_picker')
+        .append($("<option></option>")
+                    .attr("value", date)
+                    .text(date));
+});
+$('#date_picker').change(switchDate);
+$("#last_updated").text(window._GEN_DATE);
 
-$(document).ready(ready);
+});
