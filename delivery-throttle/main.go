@@ -52,6 +52,7 @@ type Order struct {
 	LineItems         []LineItem      `json:"line_items"`
 	NoteAttributes    []NoteAttribute `json:"note_attributes"`
 	Customer          Customer        `json:"customer"`
+	TotalPrice        string          `json:"total_price"`
 	FulfillmentStatus string          `json:"fulfillment_status"`
 }
 
