@@ -147,6 +147,16 @@ let switchDate = function() {
     displayOrders(orders);
 };
 
+let setUnfulfilledPrice = function() {
+    let price = 0;
+    window._ORDER_DATA.orders.map(order => {
+        if (order.fulfillment_status == "") {
+            price += Number.parseFloat(order.total_price);
+        }
+    });
+    $("#unfulfilled_price").text(`$${price.toFixed(2)}`);
+};
+
 let futureDates = getFutureDates().sort();
 $.each(futureDates, function(idx, date) {
     $('#date_picker')
@@ -156,5 +166,6 @@ $.each(futureDates, function(idx, date) {
 });
 $('#date_picker').change(switchDate);
 $("#last_updated").text(window._GEN_DATE);
+setUnfulfilledPrice();
 
 });
