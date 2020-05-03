@@ -45,13 +45,14 @@ type Customer struct {
 
 // Order represents a single order.
 type Order struct {
-	ID             int             `json:"id"`
-	Name           string          `json:"name"`
-	Note           string          `json:"note"`
-	CreatedAt      string          `json:"created_at"`
-	LineItems      []LineItem      `json:"line_items"`
-	NoteAttributes []NoteAttribute `json:"note_attributes"`
-	Customer       Customer        `json:"customer"`
+	ID                int             `json:"id"`
+	Name              string          `json:"name"`
+	Note              string          `json:"note"`
+	CreatedAt         string          `json:"created_at"`
+	LineItems         []LineItem      `json:"line_items"`
+	NoteAttributes    []NoteAttribute `json:"note_attributes"`
+	Customer          Customer        `json:"customer"`
+	FulfillmentStatus string          `json:"fulfillment_status"`
 }
 
 // Orders are all orders returned from the API.
