@@ -157,15 +157,23 @@ let setUnfulfilledPrice = function() {
     $("#unfulfilled_price").text(`$${price.toFixed(2)}`);
 };
 
-let futureDates = getFutureDates().sort();
-$.each(futureDates, function(idx, date) {
-    $('#date_picker')
-        .append($("<option></option>")
-                    .attr("value", date)
-                    .text(date));
-});
-$('#date_picker').change(switchDate);
-$("#last_updated").text(window._GEN_DATE);
+let setLastUpdated = function() {
+    $("#last_updated").text(window._GEN_DATE);
+};
+
+let setUpDateDropDown = function() {
+    let futureDates = getFutureDates().sort();
+    $.each(futureDates, function(idx, date) {
+        $('#date_picker')
+            .append($("<option></option>")
+                        .attr("value", date)
+                        .text(date));
+    });
+    $('#date_picker').change(switchDate);
+};
+
+setUpDateDropDown();
+setLastUpdated();
 setUnfulfilledPrice();
 
 });
