@@ -1,7 +1,7 @@
 {{ '//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js' | script_tag }}
 
 <style>
-.rpm-selectable-item, .rpm-selected-item {
+.rpm-selector > div {
 	cursor: pointer;
 }
 </style>
@@ -16,11 +16,11 @@
   <div>
     <span style="font-weight: bold">Stress less. Cook more.<br>
       Select 5 different items by clicking below:</span>
-    <div id="rpm-selector-selectable"></div>
+    <div id="rpm-selector-selectable" class="rpm-selector"></div>
   </div>
   <div style="margin-top: 30px;">
     <span style="font-weight: bold">Selected:</span>
-    <div id="rpm-selector-selected"></div>
+    <div id="rpm-selector-selected" class="rpm-selector"></div>
   </div>
 </div>
 <input type="hidden" name="properties[Selected]" id="rpm-selected-input"></input>
@@ -31,6 +31,8 @@
   var possibleItems = [
     '4 Beef Burgers',
     '2 lbs Thin Sliced Antibiotic-Free Chicken',
+    '2 lbs of Bell & Evans Chicken Legs and Thighs',
+    '2 lbs of Stir Fry Chicken Strips',
     '2 lbs Antibiotic-Free Ground Turkey',
     '4 Boneless Pork Chops',
     '2 lbs Beef Cubes (for stews/kebobs)',
@@ -85,7 +87,7 @@
       return;
     }
 
-    var selectedItem = $('<div class="rpm-selected-item">X ' + i + '</div>');
+    var selectedItem = $('<div>X ' + i + '</div>');
     selectedItem.data('item', i);
     selectedItem.click(function(e) {
       $(e.target).remove();
@@ -97,7 +99,7 @@
   };
 
   $.map(possibleItems, function(i) {
-    var selectableItem = $('<div class="rpm-selectable-item">' + i + '</div>');
+    var selectableItem = $('<div>' + i + '</div>');
     selectableItem.click(i, function(e) {
       addToSelectedItems(e.data);
     });
