@@ -19,6 +19,8 @@ import (
 	"google.golang.org/api/option"
 )
 
+var gitCommit string
+
 // NoteAttribute is a k/v pair on an order.
 type NoteAttribute struct {
 	Name  string `json:"name"`
@@ -71,6 +73,8 @@ func main() {
 	mw := io.MultiWriter(os.Stdout, f)
 	log.SetOutput(mw)
 	defer f.Close()
+
+	log.Printf("git commit: %s", gitCommit)
 
 	orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
 	disableDates(cfg, datesToDisable(orders))
