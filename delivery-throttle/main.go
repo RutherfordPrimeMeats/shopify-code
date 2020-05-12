@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -62,22 +63,25 @@ type Orders struct {
 }
 
 func main() {
-	f := logFile()
+	configPath := flag.String("config_path", "", "path to the config file")
+	flag.Parse()
+	cfg := config.New(*configPath)
+
+	f := logFile(cfg)
 	mw := io.MultiWriter(os.Stdout, f)
 	log.SetOutput(mw)
 	defer f.Close()
 
-	cfg := config.New("config.json")
 	orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
 	disableDates(cfg, datesToDisable(orders))
 	storeOrders(cfg, orders)
 }
 
-func logFile() *os.File {
+func logFile(cfg config.Config) *os.File {
 	date := strings.Fields(time.Now().String())[0]
-	os.Mkdir("logs", 0755)
-	os.Mkdir(fmt.Sprintf("logs/%s", date), 0755)
-	logPath := fmt.Sprintf("logs/%s/%d.log", date, time.Now().Unix())
+	os.Mkdir(cfg.LogPath, 0755)
+	os.Mkdir(fmt.Sprintf("%s/%s", cfg.LogPath, date), 0755)
+	logPath := fmt.Sprintf("%s/%s/%d.log", cfg.LogPath, date, time.Now().Unix())
 	f, err := os.OpenFile(logPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		log.Fatal(err)

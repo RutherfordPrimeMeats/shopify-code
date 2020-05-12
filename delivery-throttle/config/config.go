@@ -13,6 +13,7 @@ type Config struct {
 	BaseURL     string
 	BlockedDays []string
 	GCPKeyFile  string
+	LogPath     string
 	MaxOrders   int
 	WarnOrders  int
 }
