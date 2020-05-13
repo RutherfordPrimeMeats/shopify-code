@@ -122,9 +122,14 @@ func storeOrders(cfg config.Config, orders Orders) {
 
 	w.Write([]byte("window._ORDER_DATA="))
 	w.Write(od)
+
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		log.Fatal(err)
+	}
 	date := fmt.Sprintf(
 		";\nwindow._GEN_DATE='%s';\n",
-		time.Now().Format("Mon, 2 Jan 2006 15:04:05 MST"))
+		time.Now().In(loc).Format("Mon, 2 Jan 2006 15:04:05 MST"))
 	w.Write([]byte(date))
 	if err := w.Close(); err != nil {
 		log.Fatal(err)
