@@ -10,4 +10,6 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 COPY --from=builder /go/src/shopify-code/delivery-throttle/delivery-throttle .
+COPY --from=builder /usr/local/go/lib/time/zoneinfo.zip /
+ENV ZONEINFO /zoneinfo.zip
 ENTRYPOINT ["./delivery-throttle"]
