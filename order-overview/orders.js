@@ -46,7 +46,7 @@ let getProductsForOrders = function(orders) {
         order.line_items.map(line_item => {
             products[line_item.title] = (products[line_item.title] || 0) + 1;
             // If this is a 5 for $55, also include the sub-items.
-            if (line_item.title == "5 for $55 Survival Package") {
+            if (line_item.title.includes('Survival Package')) {
                 let subs = line_item.properties[0].value.split(', ');
                 subs.map(sub => {
                     products[sub] = (products[sub] || 0) + 1;
@@ -98,7 +98,7 @@ let getLineItemHTML = function(order) {
     let items = [];
     order.line_items.map(line => {
         let text = line.title;
-        if (text == '5 for $55 Survival Package') {
+        if (text.includes('Survival Package')) {
             text += `<div class="package">${line.properties[0].value}</span>`;
         }
         items.push(`<li>${text}</li>`);
