@@ -29,6 +29,9 @@ let getFutureDates = function() {
 let getOrdersForDate = function(date) {
     let orders = [];
     window._ORDER_DATA.orders.map(order => {
+        if (order.fulfillment_status == 'fulfilled') {
+            return;
+        }
         order.note_attributes.map(attr => {
             if (attr.name=="pickup-date" || attr.name=="delivery-date") {
                 if (attr.value == date) {
