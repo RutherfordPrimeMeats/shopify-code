@@ -5,7 +5,7 @@
       <h1>{{ 'cart.general.title' | t }}</h1>
     </div>
 
-    <form action="/cart" method="post" novalidate class="cart">
+    <form action="/cart" method="post" class="cart">
       <table>
         <thead class="cart__row cart__header">
           <th colspan="2">{{ 'cart.label.product' | t }}</th>
@@ -111,6 +111,10 @@
         </tbody>
       </table>
 
+      {% if cart.total_price < 5000 %}
+        <div style="font-weight: 700">Please ensure you have $50 or more in your cart to check out.</div>
+        <input type="submit" name="update" class="btn btn--secondary cart__update cart__update--large small--hide" value="{{ 'cart.general.update' | t }}">
+      {% else %}
       <footer class="cart__footer">
         <div class="grid">
           {% include "1rpm-delivery-date" %}
@@ -140,6 +144,7 @@
           </div>
         </div>
       </footer>
+      {% endif %}
     </form>
   {% else %}
     <div class="empty-page-content text-center">
