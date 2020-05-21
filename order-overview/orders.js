@@ -136,7 +136,7 @@ $(document).ready(_ => {
     let getLineItemHTML = function (order) {
         let items = [];
         order.line_items.map(line => {
-            let text = line.title;
+            let text = `${line.quantity}x - ${line.title}`;
             if (text.includes('Survival Package')) {
                 text += `<div class="package">${line.properties[0].value}</div>`;
             }
