@@ -79,6 +79,8 @@ func main() {
 	orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
 	disableDates(cfg, datesToDisable(orders))
 	storeOrders(cfg, orders)
+
+	log.Printf("complete: %s", time.Now().Unix())
 }
 
 func logFile(cfg config.Config) *os.File {
