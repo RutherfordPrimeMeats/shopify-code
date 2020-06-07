@@ -65,6 +65,7 @@ type Orders struct {
 }
 
 func main() {
+	log.Printf("complete: %s\n", time.Now().Unix())
 	configPath := flag.String("config_path", "", "path to the config file")
 	flag.Parse()
 	cfg := config.New(*configPath)
@@ -78,9 +79,9 @@ func main() {
 
 	orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
 	disableDates(cfg, datesToDisable(orders))
-	storeOrders(cfg, orders)
+	t := storeOrders(cfg, orders)
 
-	log.Printf("complete: %s", time.Now().Unix())
+	log.Printf("complete: %s", t)
 }
 
 func logFile(cfg config.Config) *os.File {
@@ -107,7 +108,7 @@ func datesToDisable(orders Orders) map[string]int {
 	return dates
 }
 
-func storeOrders(cfg config.Config, orders Orders) {
+func storeOrders(cfg config.Config, orders Orders) string {
 	od, err := json.Marshal(orders)
 	if err != nil {
 		log.Fatal(err)
@@ -129,9 +130,8 @@ func storeOrders(cfg config.Config, orders Orders) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	date := fmt.Sprintf(
-		";\nwindow._GEN_DATE='%s';\n",
-		time.Now().In(loc).Format("Mon, 2 Jan 2006 15:04:05 MST"))
+	completeTime := time.Now().In(loc).Format("Mon, 2 Jan 2006 15:04:05 MST")
+	date := fmt.Sprintf(";\nwindow._GEN_DATE='%s';\n", completeTime)
 	w.Write([]byte(date))
 	if err := w.Close(); err != nil {
 		log.Fatal(err)
@@ -139,6 +139,8 @@ func storeOrders(cfg config.Config, orders Orders) {
 
 	oh.Update(ctx, storage.ObjectAttrsToUpdate{CacheControl: "no-cache, max-age:0"})
 	oh.ACL().Set(ctx, storage.AllUsers, storage.RoleReader)
+
+	return completeTime
 }
 
 func disableDates(cfg config.Config, dates map[string]int) {
