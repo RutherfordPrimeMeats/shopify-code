@@ -65,7 +65,6 @@ type Orders struct {
 }
 
 func main() {
-	log.Printf("complete: %s\n", time.Now().Unix())
 	configPath := flag.String("config_path", "", "path to the config file")
 	flag.Parse()
 	cfg := config.New(*configPath)
