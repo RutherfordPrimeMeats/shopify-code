@@ -12,6 +12,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	_ "time/tzdata"
 
 	"cloud.google.com/go/storage"
 	"github.com/RutherfordPrimeMeats/shopify-code/delivery-throttle/config"

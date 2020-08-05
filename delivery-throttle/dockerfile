@@ -1,4 +1,4 @@
-FROM golang:1.14.2-buster AS builder
+FROM golang:1.15-rc-buster AS builder
 
 WORKDIR /go/src
 RUN git clone https://github.com/RutherfordPrimeMeats/shopify-code.git
@@ -10,6 +10,4 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 COPY --from=builder /go/src/shopify-code/delivery-throttle/delivery-throttle .
-COPY --from=builder /usr/local/go/lib/time/zoneinfo.zip /
-ENV ZONEINFO /zoneinfo.zip
 ENTRYPOINT ["./delivery-throttle"]
