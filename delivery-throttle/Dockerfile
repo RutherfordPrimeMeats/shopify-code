@@ -1,4 +1,4 @@
-FROM golang:1.15.2-buster AS builder
+FROM golang:1.15-buster AS builder
 
 WORKDIR /go/src
 RUN git clone https://github.com/RutherfordPrimeMeats/shopify-code.git
