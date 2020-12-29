@@ -3,8 +3,9 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Config is the main binary configuration.

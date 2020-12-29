@@ -5,11 +5,8 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 	_ "time/tzdata"
@@ -18,6 +15,8 @@ import (
 	"github.com/RutherfordPrimeMeats/shopify-code/delivery-throttle/config"
 	"github.com/RutherfordPrimeMeats/shopify-code/delivery-throttle/datetest"
 	"google.golang.org/api/option"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var gitCommit string
@@ -70,11 +69,6 @@ func main() {
 	flag.Parse()
 	cfg := config.New(*configPath)
 
-	f := logFile(cfg)
-	mw := io.MultiWriter(os.Stdout, f)
-	log.SetOutput(mw)
-	defer f.Close()
-
 	log.Printf("git commit: %s", gitCommit)
 
 	orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
@@ -82,18 +76,6 @@ func main() {
 	t := storeOrders(cfg, orders)
 
 	log.Printf("complete: %s", t)
-}
-
-func logFile(cfg config.Config) *os.File {
-	date := strings.Fields(time.Now().String())[0]
-	os.Mkdir(cfg.LogPath, 0755)
-	os.Mkdir(fmt.Sprintf("%s/%s", cfg.LogPath, date), 0755)
-	logPath := fmt.Sprintf("%s/%s/%d.log", cfg.LogPath, date, time.Now().Unix())
-	f, err := os.OpenFile(logPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return f
 }
 
 func datesToDisable(orders Orders) map[string]int {

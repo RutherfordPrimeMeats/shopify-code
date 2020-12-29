@@ -1,10 +1,11 @@
 package datetest
 
 import (
-	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func atoi(d string) int {
