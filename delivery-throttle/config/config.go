@@ -1,10 +1,7 @@
 package config
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"os"
-
+	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -13,29 +10,18 @@ type Config struct {
 	APISecret   string // https://key:password@
 	BaseURL     string
 	BlockedDays []string
-	GCPKeyFile  string
+	GCPKeyJSON  string
 	LogPath     string
 	MaxOrders   int
 	WarnOrders  int
 }
 
-// New returns a Config from a json file at the provided path.
-func New(path string) Config {
-	f, err := os.Open(path)
+// FromEnv returns a Config from the environment variables.
+func FromEnv() Config {
+	var c Config
+	err := envconfig.Process("rpm_dt", &c)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
-
-	bytes, err := ioutil.ReadAll(f)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var cfg Config
-	err = json.Unmarshal(bytes, &cfg)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return cfg
+	return c
 }

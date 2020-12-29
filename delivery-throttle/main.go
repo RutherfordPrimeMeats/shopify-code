@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -18,8 +17,6 @@ import (
 
 	log "github.com/sirupsen/logrus"
 )
-
-var gitCommit string
 
 // NoteAttribute is a k/v pair on an order.
 type NoteAttribute struct {
@@ -65,11 +62,7 @@ type Orders struct {
 }
 
 func main() {
-	configPath := flag.String("config_path", "", "path to the config file")
-	flag.Parse()
-	cfg := config.New(*configPath)
-
-	log.Printf("git commit: %s", gitCommit)
+	cfg := config.FromEnv()
 
 	orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
 	disableDates(cfg, datesToDisable(orders))
@@ -97,7 +90,7 @@ func storeOrders(cfg config.Config, orders Orders) string {
 	}
 
 	ctx := context.Background()
-	client, err := storage.NewClient(ctx, option.WithCredentialsFile(cfg.GCPKeyFile))
+	client, err := storage.NewClient(ctx, option.WithCredentialsJSON([]byte(cfg.GCPKeyJSON)))
 	if err != nil {
 		log.Fatal(err)
 	}
