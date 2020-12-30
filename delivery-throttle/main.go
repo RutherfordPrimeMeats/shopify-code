@@ -112,7 +112,7 @@ func storeOrders(cfg config.Config, orders Orders) string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	completeTime := time.Now().In(loc).Format("Mon, 2 Jan 2006 15:04:05 MST")
+	completeTime := time.Now().In(loc).Format("Mon, 2 Jan 2006 15:04 MST")
 	date := fmt.Sprintf(";\nwindow._GEN_DATE='%s';\n", completeTime)
 	w.Write([]byte(date))
 	if err := w.Close(); err != nil {
