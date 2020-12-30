@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	"github.com/kelseyhightower/envconfig"
 	log "github.com/sirupsen/logrus"
 )
@@ -11,9 +13,28 @@ type Config struct {
 	BaseURL     string
 	BlockedDays []string
 	GCPKeyJSON  string
-	LogPath     string
-	MaxOrders   int
-	WarnOrders  int
+
+	MaxOrders  int
+	WarnOrders int
+
+	SleepTime string
+	ExitAfter string
+}
+
+func (c *Config) SleepDuration() time.Duration {
+	d, err := time.ParseDuration(c.SleepTime)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return d
+}
+
+func (c *Config) ExitTime() time.Time {
+	d, err := time.ParseDuration(c.ExitAfter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return time.Now().Add(d)
 }
 
 // FromEnv returns a Config from the environment variables.

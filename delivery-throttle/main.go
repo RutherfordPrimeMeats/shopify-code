@@ -64,11 +64,17 @@ type Orders struct {
 func main() {
 	cfg := config.FromEnv()
 
-	orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
-	disableDates(cfg, datesToDisable(orders))
-	t := storeOrders(cfg, orders)
+	exitTime := cfg.ExitTime()
 
-	log.Printf("complete: %s", t)
+	for time.Now().Before(exitTime) {
+		orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
+		disableDates(cfg, datesToDisable(orders))
+		t := storeOrders(cfg, orders)
+		log.Printf("complete: %s", t)
+		time.Sleep(cfg.SleepDuration())
+	}
+
+	log.Printf("shutting down")
 }
 
 func datesToDisable(orders Orders) map[string]int {
