@@ -17,4 +17,4 @@ jobs:
           RPM_DT_APISECRET: ${{ secrets.RPM_DT_APISECRET }}
           RPM_DT_GCPKEYJSON: ${{ secrets.RPM_DT_GCPKEYJSON }}
         run: |
-          .github/workflows/delivery-throttle.sh
+          ./.github/workflows/delivery-throttle.sh
