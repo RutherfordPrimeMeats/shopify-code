@@ -66,6 +66,8 @@ func main() {
 
 	exitTime := cfg.ExitTime()
 
+	log.SetFormatter(&log.TextFormatter{ForceColors: true})
+
 	for time.Now().Before(exitTime) {
 		orders := getOrdersFromURL(cfg, cfg.BaseURL+"/orders.json?status=any&limit=250")
 		disableDates(cfg, datesToDisable(orders))
