@@ -10,6 +10,6 @@ docker run \
   -e RPM_DT_MAXORDERS="20" \
   -e RPM_DT_WARNORDERS="15" \
   -e RPM_DT_SLEEPTIME="2m" \
-  -e RPM_DT_EXITAFTER="18m" \
+  -e RPM_DT_EXITAFTER="25m" \
   --entrypoint=/work/delivery-throttle/scripts/run_docker.sh golang:1.15-buster
   
