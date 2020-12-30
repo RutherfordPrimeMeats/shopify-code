@@ -9,7 +9,7 @@ docker run \
   -e RPM_DT_BLOCKEDDAYS="2020-12-31,2021-1-1" \
   -e RPM_DT_MAXORDERS="20" \
   -e RPM_DT_WARNORDERS="15" \
-  -e RPM_DT_SLEEPTIME="10m" \
+  -e RPM_DT_SLEEPTIME="8m" \
   -e RPM_DT_EXITAFTER="18m" \
   --entrypoint=/work/delivery-throttle/scripts/run_docker.sh golang:1.15-buster
   
