@@ -17,7 +17,6 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: "1.15"
-      - run: go version
 
       - name: Throttle Delivery
         env:
@@ -31,6 +30,6 @@ jobs:
           RPM_DT_SLEEPTIME: "4m"
           RPM_DT_EXITAFTER: "55m"
         run: |
+          go version
           cd delivery-throttle
-          go build .
-          ./delivery-throttle
+          go run .
