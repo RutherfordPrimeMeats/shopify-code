@@ -10,11 +10,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout codebase
+        uses: actions/checkout@v2
+      
+      - name: Setup go environment
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.15"
+      - run: go version
 
       - name: Throttle Delivery
         env:
+          TZ: America/New_York
           RPM_DT_APISECRET: ${{ secrets.RPM_DT_APISECRET }}
           RPM_DT_GCPKEYJSON: ${{ secrets.RPM_DT_GCPKEYJSON }}
+          RPM_DT_BASEURL: "https://rutherford-prime-meats.myshopify.com/admin/api/2020-10"
+          RPM_DT_BLOCKEDDAYS: "2020-12-31,2021-1-1"
+          RPM_DT_MAXORDERS: "20"
+          RPM_DT_WARNORDERS: "15"
+          RPM_DT_SLEEPTIME: "4m"
+          RPM_DT_EXITAFTER: "55m"
         run: |
-          ./.github/workflows/delivery-throttle.sh
+          cd delivery-throttle
+          go build .
+          ./delivery-throttle
