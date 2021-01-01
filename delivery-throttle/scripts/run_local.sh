@@ -9,4 +9,4 @@ export RPM_DT_WARNORDERS="15"
 export RPM_DT_SLEEPTIME="10s"
 export RPM_DT_EXITAFTER="30s"
 
-go run main.go
+go run .
