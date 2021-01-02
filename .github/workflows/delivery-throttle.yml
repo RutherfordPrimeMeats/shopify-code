@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cancel Previous Runs
-        uses: rokroskar/workflow-run-cleanup-action@v0.2.2
+        uses: RutherfordPrimeMeats/workflow-run-cleanup-action@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
