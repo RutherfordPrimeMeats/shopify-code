@@ -3,7 +3,7 @@ name: Delivery Throttle
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0/15 * * * *'
+    - cron: '42 * * * *'
 
 jobs:
   cancel:
