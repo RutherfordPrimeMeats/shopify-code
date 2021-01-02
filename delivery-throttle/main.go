@@ -8,6 +8,18 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+func heartbeat(c config.Config, s string, quit chan bool) {
+	for {
+		select {
+		case <-quit:
+			return
+		default:
+			time.Sleep(c.HeartbeatDuration())
+			log.Printf("last complete: %s", s)
+		}
+	}
+}
+
 func main() {
 	cfg := config.FromEnv()
 
@@ -20,7 +32,10 @@ func main() {
 		disableDates(cfg, datesToDisable(orders))
 		t := storeOrders(cfg, orders)
 		log.Printf("complete: %s", t)
+		quit := make(chan bool)
+		go heartbeat(cfg, t, quit)
 		time.Sleep(cfg.SleepDuration())
+		quit <- true
 	}
 
 	log.Printf("shutting down")

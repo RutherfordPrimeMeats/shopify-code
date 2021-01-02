@@ -19,14 +19,23 @@ type Config struct {
 
 	SleepTime string
 	ExitAfter string
+	Heartbeat string
 }
 
-func (c *Config) SleepDuration() time.Duration {
-	d, err := time.ParseDuration(c.SleepTime)
+func duration(s string) time.Duration {
+	d, err := time.ParseDuration(s)
 	if err != nil {
 		log.Fatal(err)
 	}
 	return d
+}
+
+func (c *Config) HeartbeatDuration() time.Duration {
+	return duration(c.Heartbeat)
+}
+
+func (c *Config) SleepDuration() time.Duration {
+	return duration(c.SleepTime)
 }
 
 func (c *Config) ExitTime() time.Time {
