@@ -8,12 +8,24 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/RutherfordPrimeMeats/shopify-code/delivery-throttle/config"
+	"github.com/RutherfordPrimeMeats/shopify-code/delivery-throttle/datetest"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/api/option"
 )
 
 func storeOrders(cfg config.Config, orders Orders) string {
-	od, err := json.Marshal(orders)
+	futureOrders := Orders{}
+	for _, order := range orders.Collection {
+		for _, note := range order.NoteAttributes {
+			if note.Name == "delivery-date" || note.Name == "pickup-date" {
+				if !datetest.BeforeNow(note.Value) {
+					futureOrders.Collection = append(futureOrders.Collection, order)
+				}
+			}
+		}
+	}
+
+	od, err := json.Marshal(futureOrders)
 	if err != nil {
 		log.Fatal(err)
 	}
