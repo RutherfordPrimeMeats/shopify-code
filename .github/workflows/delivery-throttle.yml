@@ -36,8 +36,8 @@ jobs:
           RPM_DT_BLOCKEDDAYS: "2020-12-31,2021-1-1"
           RPM_DT_MAXORDERS: "20"
           RPM_DT_WARNORDERS: "15"
-          RPM_DT_SLEEPTIME: "4m"
-          RPM_DT_EXITAFTER: "55m"
+          RPM_DT_SLEEPTIME: "10m"
+          RPM_DT_EXITAFTER: "5h"
         run: |
           go version
           cd delivery-throttle
