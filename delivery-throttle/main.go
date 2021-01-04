@@ -15,7 +15,7 @@ func heartbeat(c config.Config, quit chan bool) {
 		case <-quit:
 			return
 		default:
-			log.Printf("next run in approximately: %s", nextRun.Sub(time.Now()))
+			log.Printf("next run in approximately: %s", time.Until(nextRun))
 			time.Sleep(c.HeartbeatDuration())
 		}
 	}
