@@ -42,4 +42,5 @@ jobs:
         run: |
           go version
           cd delivery-throttle
-          go run .
+          go build .
+          ./delivery-throttle || ./delivery-throttle || ./delivery-throttle || ./delivery-throttle
