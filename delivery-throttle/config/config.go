@@ -39,11 +39,7 @@ func (c *Config) SleepDuration() time.Duration {
 }
 
 func (c *Config) ExitTime() time.Time {
-	d, err := time.ParseDuration(c.ExitAfter)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return time.Now().Add(d)
+	return time.Now().Add(duration(c.ExitAfter))
 }
 
 // FromEnv returns a Config from the environment variables.
