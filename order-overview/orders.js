@@ -1,5 +1,4 @@
 $(document).ready(_ => {
-
     let PACKAGES = {
         'Summer Sizzler BBQ Box': [
             '5 lbs of 6 oz burgers',
@@ -32,13 +31,15 @@ $(document).ready(_ => {
 
     let getAllDates = function () {
         let dates = new Set();
-        window._ORDER_DATA.orders.map(order => {
-            order.note_attributes.map(attr => {
-                if (attr.name == "pickup-date" || attr.name == "delivery-date") {
-                    dates.add(attr.value);
-                }
-            });
-        });
+        if (window._ORDER_DATA.orders) {
+          window._ORDER_DATA.orders.map(order => {
+              order.note_attributes.map(attr => {
+                  if (attr.name == "pickup-date" || attr.name == "delivery-date") {
+                      dates.add(attr.value);
+                  }
+              });
+          });
+        }
         return dates;
     };
 
@@ -191,12 +192,16 @@ $(document).ready(_ => {
 
     let setUnfulfilledPrice = function () {
         let price = 0;
-        window._ORDER_DATA.orders.map(order => {
-            if (order.fulfillment_status == "") {
-                price += Number.parseFloat(order.total_price);
-            }
-        });
-        $("#unfulfilled_price").text(`$${price.toFixed(2)}`);
+        if (window._ORDER_DATA.orders) {
+          window._ORDER_DATA.orders.map(order => {
+              if (order.fulfillment_status == "") {
+                  price += Number.parseFloat(order.total_price);
+              }
+          });
+          $("#unfulfilled_price").text(`$${price.toFixed(2)}`);
+        } else {
+          $("#unfulfilled_price").parent().html("<strong>There are no unfulfilled orders.</strong>");
+        }
     };
 
     let setLastUpdated = function () {
@@ -205,6 +210,10 @@ $(document).ready(_ => {
 
     let setUpDateDropDown = function () {
         let futureDates = getFutureDates().sort();
+        if (!futureDates.length) {
+          $('#date_picker').parent().remove();
+          return;
+        }
         $.each(futureDates, function (idx, date) {
             $('#date_picker')
                 .append($("<option></option>")
@@ -217,5 +226,4 @@ $(document).ready(_ => {
     setUpDateDropDown();
     setLastUpdated();
     setUnfulfilledPrice();
-
 });
