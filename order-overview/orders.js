@@ -99,7 +99,7 @@ $(document).ready(_ => {
 
     let displayProducts = function (products) {
         $("#products").html('');
-        let table = $(`<table><thead><tr><th>Product</th><th>Quantity</th>
+        let table = $(`<table class="table table-striped"><thead><tr><th>Product</th><th>Quantity</th>
         </tr></thead><tbody></tbody></table>`);
         $("#products").append(table);
 
@@ -154,7 +154,7 @@ $(document).ready(_ => {
         if (orders.length == 0) {
             return;
         }
-        let ret = $(`<table><thead><tr><th>ID</th><th>Customer</th><th>Products</th>
+        let ret = $(`<table class="table table-striped"><thead><tr><th>ID</th><th>Customer</th><th>Products</th>
         <th>Address / Note</th></tr></thead><tbody></tbody></table>`);
         orders.map(order => {
             let row = $('<tr></tr>');

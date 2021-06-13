@@ -6,49 +6,23 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://storage.googleapis.com/rutherford-prime-meats-07070/orders/order-data.js"></script>
     <script src="orders.js"></script>
     <title>RPM Orders</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-      body {
-        margin-bottom: 1em;
-      }
-      h2 {
-        margin-top: 1em;
-      }
-      tbody tr:nth-child(odd) {
-        background-color: lightgray;
-      }
-      table, tr, td {
-        border: 1px solid black;
-        padding: 0.2em;
-      }
-      .package {
-        font-size: 0.8em;
-      }
-      .note {
-        font-size: 0.8em;
-        font-style: italic;
-      }
-      .unfulfilled_price {
-        font-weight: bold;
-      }
-    </style>
+    <!-- Bootstrap core CSS --><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
   </head>
 
   <body>
 
     <!-- Begin page content -->
     <main role="main" class="container">
-      <h1 class="mt-5">Orders</h1>
+      <h1 class="my-4">Orders</h1>
       <p class="lead">Last updated: <span id="last_updated"></span>. If this is out of date, contact James.</p>
       <p>Note: The 5 for $55 packages are "double counted" below, once as the full package, and then the
          individual items in the package are included as their own line items.</p>
-      <p>The value of all unfulfilled orders is: <span id="unfulfilled_price"></span></p>
+      <p>The value of all unfulfilled orders is: <span id="unfulfilled_price" class="fw-bold"></span></p>
       <p>Pick a date: <select id="date_picker"><option></option></select></p>
       <div id="products"></div>
       <div id="orders"></div>
