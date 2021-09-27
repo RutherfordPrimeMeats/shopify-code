@@ -37,7 +37,7 @@ jobs:
           RPM_DT_MAXORDERS: "20"
           RPM_DT_WARNORDERS: "15"
           RPM_DT_SLEEPTIME: "10m"
-          RPM_DT_EXITAFTER: "5h"
+          RPM_DT_EXITAFTER: "6h"
           RPM_DT_HEARTBEAT: "9s420ms"
         run: |
           go version
