@@ -10,6 +10,6 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	golang.org/x/net v0.0.0-20220114011407-0dd24b26b47d // indirect
 	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/api v0.66.0
+	google.golang.org/api v0.67.0
 	google.golang.org/grpc v1.43.0 // indirect
 )
