@@ -58,11 +58,11 @@
     
     var variant = '' + (selectedText.join(', ').match(/premium/g) || []).length;
     if (variant == "2") {
-      $("#ProductPrice-1rpm-product-selector-template").text("$79.00");
+      $("#ProductPrice-1rpm-product-selector-template").text("$89.00");
     } else if (variant == "1") {
-      $("#ProductPrice-1rpm-product-selector-template").text("$67.00");
+      $("#ProductPrice-1rpm-product-selector-template").text("$77.00");
     } else {
-      $("#ProductPrice-1rpm-product-selector-template").text("$55.00");
+      $("#ProductPrice-1rpm-product-selector-template").text("$65.00");
     }
     for (var i=0; i < productObj.variants.length; i++) {
       if (productObj.variants[i].title == variant) {
