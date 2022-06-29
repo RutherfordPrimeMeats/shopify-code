@@ -26,8 +26,8 @@ jobs:
           TZ: America/New_York
           RPM_DT_APISECRET: ${{ secrets.RPM_DT_APISECRET }}
           RPM_DT_GCPKEYJSON: ${{ secrets.RPM_DT_GCPKEYJSON }}
-          RPM_DT_BASEURL: "https://rutherford-prime-meats.myshopify.com/admin/api/2020-10"
-          RPM_DT_BLOCKEDDAYS: "2022-5-28"
+          RPM_DT_BASEURL: "https://rutherford-prime-meats.myshopify.com/admin/api/2022-04"
+          RPM_DT_BLOCKEDDAYS: "2022-6-30,2022-7-1,2022-7-2,2022-7-3,2022-7-4,2022-7-5"
           RPM_DT_MAXORDERS: "20"
           RPM_DT_WARNORDERS: "15"
           RPM_DT_SLEEPTIME: "10m"
