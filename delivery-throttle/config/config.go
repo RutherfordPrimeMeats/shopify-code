@@ -20,6 +20,8 @@ type Config struct {
 	SleepTime string
 	ExitAfter string
 	Heartbeat string
+
+	HealthcheckURL string
 }
 
 func duration(s string) time.Duration {
