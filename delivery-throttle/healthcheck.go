@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/RutherfordPrimeMeats/shopify-code/delivery-throttle/config"
+	
+	log "github.com/sirupsen/logrus"
 )
 
 func pingHealthChecks() {
@@ -15,7 +17,7 @@ func pingHealthChecks() {
 
 	_, err := client.Head(config.FromEnv().HealthcheckURL)
 	if err != nil {
-		fmt.Printf("%s", err)
+		log.Printf("%s", err)
 	}
-	fmt.Printf("Healthchecks.io pinged")
+	log.Printf("Healthchecks.io pinged")
 }
