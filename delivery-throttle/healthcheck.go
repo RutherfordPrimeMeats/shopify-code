@@ -17,4 +17,5 @@ func pingHealthChecks() {
 	if err != nil {
 		fmt.Printf("%s", err)
 	}
+	fmt.Printf("Healthchecks.io pinged")
 }
