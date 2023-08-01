@@ -1,4 +1,4 @@
-name: Delivery Throttle
+name: Throttle Orders
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
     - cron: '42 * * * *'
 
 concurrency:
-  group: delivery-throttle
+  group: throttle-orders
   cancel-in-progress: true
 
 jobs:
