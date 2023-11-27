@@ -6,5 +6,5 @@ require (
 	cloud.google.com/go/storage v1.35.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/sirupsen/logrus v1.9.3
-	google.golang.org/api v0.151.0
+	google.golang.org/api v0.152.0
 )
