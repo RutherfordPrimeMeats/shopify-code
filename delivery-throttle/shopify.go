@@ -151,7 +151,6 @@ func getOrdersFromURL(cfg config.Config, url string) Orders {
 	json.Unmarshal(body, &orders)
 	nu := nextURL(res)
 	if nu != "" {
-		nu += "&limit=250"
 		oo := getOrdersFromURL(cfg, nu)
 		orders.Collection = append(orders.Collection, oo.Collection...)
 	}
