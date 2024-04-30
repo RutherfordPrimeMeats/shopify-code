@@ -8,19 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func heartbeat(c config.Config, quit chan bool) {
-	nextRun := time.Now().Add(c.SleepDuration())
-	for {
-		select {
-		case <-quit:
-			return
-		default:
-			log.Printf("next run in approximately: %s", time.Until(nextRun))
-			time.Sleep(c.HeartbeatDuration())
-		}
-	}
-}
-
 func main() {
 	cfg := config.FromEnv()
 
@@ -35,7 +22,6 @@ func main() {
 		t := storeOrders(cfg, orders)
 		log.Printf("complete: %s", t)
 		quit := make(chan bool)
-		go heartbeat(cfg, quit)
 		time.Sleep(cfg.SleepDuration())
 		quit <- true
 	}
