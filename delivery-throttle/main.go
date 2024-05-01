@@ -21,9 +21,7 @@ func main() {
 		disableDates(cfg, datesToDisable(orders))
 		t := storeOrders(cfg, orders)
 		log.Printf("complete: %s", t)
-		quit := make(chan bool)
 		time.Sleep(cfg.SleepDuration())
-		quit <- true
 	}
 
 	log.Printf("shutting down")
