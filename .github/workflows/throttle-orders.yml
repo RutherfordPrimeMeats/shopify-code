@@ -29,7 +29,7 @@ jobs:
           RPM_DT_HEALTHCHECKURL: ${{ secrets.RPM_DT_HEALTHCHECKURL }}
           RPM_DT_BASEURL: "https://rutherford-prime-meats.myshopify.com/admin/api/2023-10"
           # No leading zeros
-          RPM_DT_BLOCKEDDAYS: "2024-9-28,2024-9-29,2024-9-30,2024-10-1,2024-10-2,2024-10-3,2024-10-4,2024-10-5,2024-10-6,2024-10-7"
+          RPM_DT_BLOCKEDDAYS: "2024-11-28,2024-12-24,2024-12-25,2024-12-26,2024-12-31,2025-1-1,2025-1-2"
           RPM_DT_MAXORDERS: "20"
           RPM_DT_WARNORDERS: "15"
           RPM_DT_SLEEPTIME: "10m"
