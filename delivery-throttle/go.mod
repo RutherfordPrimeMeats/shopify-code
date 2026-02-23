@@ -1,6 +1,6 @@
 module github.com/RutherfordPrimeMeats/shopify-code/delivery-throttle
 
-go 1.25
+go 1.25.0
 
 toolchain go1.25.7
 
@@ -8,7 +8,7 @@ require (
 	cloud.google.com/go/storage v1.60.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/sirupsen/logrus v1.9.4
-	google.golang.org/api v0.267.0
+	google.golang.org/api v0.268.0
 )
 
 require (
