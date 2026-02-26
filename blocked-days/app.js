@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Initialize Firestore
-const firestore = new Firestore();
+const firestore = new Firestore({ databaseId: 'rutherford-prime-meats' });
 
 // Initialize application settings if missing
 SettingsService.initSettings().catch(console.error);

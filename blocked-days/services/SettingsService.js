@@ -1,6 +1,6 @@
 const { Firestore } = require('@google-cloud/firestore');
 
-const db = new Firestore();
+const db = new Firestore({ databaseId: 'rutherford-prime-meats' });
 const SETTINGS_COLLECTION = 'settings';
 const MAIN_SETTINGS_DOC = 'app_settings';
 
