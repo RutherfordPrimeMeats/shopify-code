@@ -37,7 +37,7 @@ router.post('/register/begin', checkRegistrationEnabled, async (req, res) => {
     const options = await generateRegistrationOptions({
       rpName,
       rpID,
-      userID: username, // Using username as ID for simplicity
+      userID: new Uint8Array(Buffer.from(username)), // Converted to Uint8Array for simplewebauthn
       userName: username,
       attestationType: 'none',
       authenticatorSelection: {
