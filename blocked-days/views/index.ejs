@@ -26,7 +26,7 @@
 
   document.getElementById('btnLogin').addEventListener('click', async () => {
     const username = document.getElementById('username').value.trim();
-    if (!username) return showAlert('Please enter a username');
+    // Do not enforce username for login to allow discoverable credentials
 
     try {
       // 1. Get options

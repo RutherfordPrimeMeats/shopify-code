@@ -62,6 +62,45 @@ router.get('/admin/settings', requireAdmin, async (req, res) => {
   }
 });
 
+const UserService = require('../services/UserService');
+
+/**
+ * Admin: Get Users
+ */
+router.get('/admin/users', requireAdmin, async (req, res) => {
+  try {
+    const users = await UserService.getAllUsers();
+    res.json({ users });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
+/**
+ * Admin: Update User Role
+ */
+router.put('/admin/users/:userId/role', requireAdmin, async (req, res) => {
+  const { userId } = req.params;
+  const { role } = req.body;
+  if (!['guest', 'user', 'admin'].includes(role)) {
+    return res.status(400).json({ error: 'Invalid role' });
+  }
+
+  try {
+    // Prevent removing your own admin rights just to be safe (optional but good idea)
+    if (userId === req.session.user.id && role !== 'admin') {
+      return res.status(403).json({ error: 'Cannot demote yourself' });
+    }
+
+    await UserService.updateUserRole(userId, role);
+    res.json({ success: true, newRole: role });
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    res.status(500).json({ error: 'Failed to update user role' });
+  }
+});
+
 /**
  * Admin: Toggle Registration
  */

@@ -122,29 +122,32 @@ router.post('/register/finish', checkRegistrationEnabled, async (req, res) => {
 router.post('/login/begin', async (req, res) => {
   let { username } = req.body;
   
-  if (!username) {
-     return res.status(400).json({ error: 'Username is required' });
-  }
-  username = username.toLowerCase();
+  let optionsConfig = {
+    rpID,
+    userVerification: 'preferred',
+  };
 
-  const user = await UserService.getUserById(username);
-  if (!user) {
-    return res.status(404).json({ error: 'User not found' });
+  if (username) {
+    username = username.toLowerCase();
+    const user = await UserService.getUserById(username);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    optionsConfig.allowCredentials = user.devices.map(dev => ({
+      id: dev.credentialID,
+      transports: dev.transports,
+    }));
+    req.session.loginUsername = username;
+  } else {
+    // If no username, clear any old one to avoid confusion
+    req.session.loginUsername = undefined;
   }
 
   try {
-    const options = await generateAuthenticationOptions({
-      rpID,
-      allowCredentials: user.devices.map(dev => ({
-        id: dev.credentialID,
-        transports: dev.transports,
-      })),
-      userVerification: 'preferred',
-    });
+    const options = await generateAuthenticationOptions(optionsConfig);
 
     // Save challenge
     req.session.currentChallenge = options.challenge;
-    req.session.loginUsername = username;
 
     req.session.save((err) => {
       if (err) {
@@ -169,14 +172,20 @@ router.post('/login/finish', async (req, res) => {
   console.log('--- Login Finish ---');
   console.log('Session ID:', req.sessionID);
   console.log('Attempting to login:', req.body.id);
-  console.log('Session Username:', username);
+  console.log('Session Username:', username || 'None (Discoverable)');
   console.log('Session Challenge:', expectedChallenge);
 
-  if (!username || !expectedChallenge) {
+  if (!expectedChallenge) {
     return res.status(400).json({ error: 'Login session expired' });
   }
 
-  const user = await UserService.getUserById(username);
+  let user;
+  if (username) {
+    user = await UserService.getUserById(username);
+  } else {
+    user = await UserService.getUserByCredentialId(req.body.id);
+  }
+
   if (!user) {
     return res.status(404).json({ error: 'User not found' });
   }

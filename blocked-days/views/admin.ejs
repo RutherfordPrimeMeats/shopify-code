@@ -15,6 +15,23 @@
       <span class="slider"></span>
     </label>
   </div>
+<div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--glass-border);">
+  <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">Users Management</h3>
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+      <thead>
+        <tr style="border-bottom: 1px solid var(--glass-border);">
+          <th style="padding: 0.5rem;">Username</th>
+          <th style="padding: 0.5rem;">Role</th>
+          <th style="padding: 0.5rem;">Created</th>
+        </tr>
+      </thead>
+      <tbody id="usersTableBody">
+        <!-- Users will be populated here -->
+      </tbody>
+    </table>
+  </div>
+</div>
 </div>
 
 <script>
@@ -52,5 +69,74 @@
         e.target.checked = !enabled; // revert
       }
     });
+
+    // Fetch users
+    try {
+      const res = await fetch('/api/admin/users');
+      if (res.ok) {
+        const data = await res.json();
+        renderUsers(data.users);
+      }
+    } catch (e) {
+      console.error(e);
+      showAlert('Failed to load users');
+    }
   });
+
+  function renderUsers(users) {
+    const tbody = document.getElementById('usersTableBody');
+    tbody.innerHTML = '';
+
+    users.forEach(user => {
+      const tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid var(--glass-border)';
+
+      const dateStr = new Date(user.createdAt).toLocaleDateString();
+
+      const roleOptions = ['guest', 'user', 'admin']
+        .map(role => `<option value="${role}" ${user.role === role ? 'selected' : ''}>${role}</option>`)
+        .join('');
+
+      tr.innerHTML = `
+        <td style="padding: 0.5rem;">${user.id}</td>
+        <td style="padding: 0.5rem;">
+          <select class="role-select" data-user-id="${user.id}" style="padding: 0.25rem; background: var(--glass-bg); color: var(--text-primary); border: 1px solid var(--glass-border); border-radius: 4px;">
+            ${roleOptions}
+          </select>
+        </td>
+        <td style="padding: 0.5rem; color: var(--text-secondary);">${dateStr}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Add event listeners to selects
+    document.querySelectorAll('.role-select').forEach(select => {
+      select.addEventListener('change', async (e) => {
+        const userId = e.target.getAttribute('data-user-id');
+        const newRole = e.target.value;
+        const oldRole = Array.from(e.target.options).find(opt => opt.defaultSelected).value;
+
+        try {
+          const res = await fetch(`/api/admin/users/${userId}/role`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ role: newRole })
+          });
+
+          if (!res.ok) {
+            const errData = await res.json();
+            throw new Error(errData.error || 'Failed to update role');
+          }
+
+          // Update default selected
+          Array.from(e.target.options).forEach(opt => opt.defaultSelected = opt.value === newRole);
+          showAlert(`Role updated successfully for ${userId}`, 'success');
+        } catch (err) {
+          console.error(err);
+          showAlert(err.message, 'error');
+          e.target.value = oldRole; // Revert visually
+        }
+      });
+    });
+  }
 </script>

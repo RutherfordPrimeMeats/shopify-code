@@ -26,7 +26,7 @@ class UserService {
       throw new Error('User already exists');
     }
     
-    const role = userId === 'jimc' ? 'user' : 'guest';
+    const role = 'guest'; // Default role logic
 
     const userData = {
       id: userId,
@@ -73,6 +73,42 @@ class UserService {
     }
     const docRef = db.collection(USERS_COLLECTION).doc(userId);
     await docRef.update({ role: newRole });
+  }
+
+  /**
+   * Get all users
+   */
+  static async getAllUsers() {
+    const snapshot = await db.collection(USERS_COLLECTION).get();
+    const users = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      users.push({
+        id: data.id,
+        role: data.role,
+        createdAt: data.createdAt
+      });
+    });
+    return users;
+  }
+
+  /**
+   * Get user by credential ID
+   */
+  static async getUserByCredentialId(credentialId) {
+    const snapshot = await db.collection(USERS_COLLECTION).get();
+    let foundUser = null;
+
+    // We have to scan since devices is an array of objects
+    for (const doc of snapshot.docs) {
+      const data = doc.data();
+      const devices = data.devices || [];
+      if (devices.some(dev => dev.credentialID === credentialId)) {
+        foundUser = data;
+        break;
+      }
+    }
+    return foundUser;
   }
 }
 
