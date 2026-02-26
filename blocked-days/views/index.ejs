@@ -4,19 +4,18 @@
   
   <div id="alerts"></div>
 
-  <div class="input-group">
-    <label for="username">Username</label>
-    <input type="text" id="username" placeholder="Enter username" autocomplete="username webauthn">
-  </div>
-
   <div class="auth-form mt-4">
     <button id="btnLogin" class="btn btn-primary">Sign In with Passkey</button>
     
     <% if (locals.registrationEnabled) { %>
-      <div style="text-align: center; margin: 1rem 0; color: var(--text-secondary); font-size: 0.9rem;">
-        &mdash; or &mdash;
+      <div style="text-align: center; margin: 1.5rem 0; color: var(--text-secondary); font-size: 0.9rem;">
+        &mdash; OR CREATE NEW &mdash;
       </div>
-      <button id="btnRegister" class="btn btn-secondary">Create a New Passkey</button>
+      <div class="input-group" style="margin-bottom: 1rem;">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Enter username" autocomplete="username webauthn">
+      </div>
+      <button id="btnRegister" class="btn btn-secondary" style="width: 100%;">Create a New Passkey</button>
     <% } %>
   </div>
 </div>
@@ -24,16 +23,13 @@
 <script>
   const { startAuthentication, startRegistration } = SimpleWebAuthnBrowser;
 
-  document.getElementById('btnLogin').addEventListener('click', async () => {
-    const username = document.getElementById('username').value.trim();
-    // Do not enforce username for login to allow discoverable credentials
-
+    document.getElementById('btnLogin').addEventListener('click', async () => {
     try {
       // 1. Get options
       const optRes = await fetch('/auth/login/begin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username })
+        body: JSON.stringify({}) 
       });
       const options = await optRes.json();
       
@@ -64,7 +60,8 @@
   const btnRegister = document.getElementById('btnRegister');
   if (btnRegister) {
     btnRegister.addEventListener('click', async () => {
-      const username = document.getElementById('username').value.trim();
+      const usernameInput = document.getElementById('username');
+      const username = usernameInput ? usernameInput.value.trim() : '';
       if (!username) return showAlert('Please enter a username');
 
       try {
