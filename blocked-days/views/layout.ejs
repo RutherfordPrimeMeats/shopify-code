@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blocked Days - Shopify Fulfillment</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#121212">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -35,6 +38,11 @@
     <%- body %>
   </main>
 
+  <div id="pwa-update-toast" class="update-toast">
+    <span>A new version is available!</span>
+    <button id="pwa-update-btn" class="btn btn-primary">Update</button>
+  </div>
+
   <script>
     // Utility for showing alerts
     function showAlert(msg, type = 'error', containerId = 'alerts') {
@@ -43,6 +51,48 @@
       container.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
       setTimeout(() => { container.innerHTML = ''; }, 5000);
     }
+
+  // Service Worker Registration
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').then(registration => {
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+
+        let refreshing;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (refreshing) return;
+          window.location.reload();
+          refreshing = true;
+        });
+
+        function listenForWaitingServiceWorker(reg, callback) {
+          function awaitStateChange() {
+            reg.installing.addEventListener('statechange', function () {
+              if (this.state === 'installed') callback(reg);
+            });
+          }
+          if (!reg) return;
+          if (reg.waiting) return callback(reg);
+          if (reg.installing) awaitStateChange();
+          reg.addEventListener('updatefound', awaitStateChange);
+        }
+
+        listenForWaitingServiceWorker(registration, (reg) => {
+          const toast = document.getElementById('pwa-update-toast');
+          const updateBtn = document.getElementById('pwa-update-btn');
+
+          toast.classList.add('show');
+
+          updateBtn.addEventListener('click', () => {
+            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          });
+        });
+
+      }, err => {
+        console.log('ServiceWorker registration failed: ', err);
+      });
+    });
+  }
   </script>
 </body>
 </html>

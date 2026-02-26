@@ -51,6 +51,7 @@ header h1 {
   font-weight: 600;
   background: -webkit-linear-gradient(0deg, #58a6ff, #a371f7);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.5px;
 }
@@ -320,4 +321,37 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(22px);
   background-color: var(--accent-color);
+}
+
+/* PWA Update Toast */
+.update-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: rgba(13, 17, 23, 0.95);
+  border: 1px solid var(--accent-color);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  z-index: 1000;
+  transform: translateY(150%);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.update-toast.show {
+  transform: translateY(0);
+}
+
+.update-toast span {
+  font-weight: 500;
+}
+
+.update-toast .btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
 }
