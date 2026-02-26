@@ -51,7 +51,13 @@ router.post('/register/begin', checkRegistrationEnabled, async (req, res) => {
     req.session.currentChallenge = options.challenge;
     req.session.registeringUsername = username;
 
-    return res.json(options);
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+        return res.status(500).json({ error: 'Failed to save session' });
+      }
+      return res.json(options);
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: error.message });
@@ -64,6 +70,12 @@ router.post('/register/begin', checkRegistrationEnabled, async (req, res) => {
 router.post('/register/finish', checkRegistrationEnabled, async (req, res) => {
   const username = req.session.registeringUsername;
   const expectedChallenge = req.session.currentChallenge;
+
+  console.log('--- Register Finish ---');
+  console.log('Session ID:', req.sessionID);
+  console.log('Attempting to register:', req.body.id);
+  console.log('Session Username:', username);
+  console.log('Session Challenge:', expectedChallenge);
 
   if (!username || !expectedChallenge) {
     return res.status(400).json({ error: 'Registration session expired' });
@@ -130,10 +142,17 @@ router.post('/login/begin', async (req, res) => {
       userVerification: 'preferred',
     });
 
+    // Save challenge
     req.session.currentChallenge = options.challenge;
     req.session.loginUsername = username;
 
-    return res.json(options);
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+        return res.status(500).json({ error: 'Failed to save session' });
+      }
+      return res.json(options);
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: error.message });
@@ -146,6 +165,12 @@ router.post('/login/begin', async (req, res) => {
 router.post('/login/finish', async (req, res) => {
   const username = req.session.loginUsername;
   const expectedChallenge = req.session.currentChallenge;
+
+  console.log('--- Login Finish ---');
+  console.log('Session ID:', req.sessionID);
+  console.log('Attempting to login:', req.body.id);
+  console.log('Session Username:', username);
+  console.log('Session Challenge:', expectedChallenge);
 
   if (!username || !expectedChallenge) {
     return res.status(400).json({ error: 'Login session expired' });

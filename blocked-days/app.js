@@ -10,6 +10,7 @@ const SettingsService = require('./services/SettingsService');
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1); // Trust first proxy (Cloud Run)
 const port = process.env.PORT || 8080;
 
 app.use(expressLayouts);
