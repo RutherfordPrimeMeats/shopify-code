@@ -39,7 +39,11 @@ class ShopifyService {
       // Split by comma, remove quotes, trim whitespace
       return datesRaw.split(',').map(d => d.replace(/['"]/g, '').trim()).filter(d => d);
     } catch (error) {
-      console.error('Error fetching sold out dates from Shopify', error.message);
+      console.error('Error fetching sold out dates from Shopify:', error.message);
+      if (error.response) {
+        console.error('Shopify response status:', error.response.status);
+        console.error('Shopify response data:', JSON.stringify(error.response.data));
+      }
       throw error;
     }
   }

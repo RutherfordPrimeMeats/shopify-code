@@ -108,12 +108,22 @@
 
   async function fetchDates() {
     try {
+      console.log('Fetching /api/dates...');
       const res = await fetch('/api/dates');
-      if (!res.ok) throw new Error('Failed to load dates');
+      console.log('Response status:', res.status);
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('Server responded with error:', res.status, errorText);
+        throw new Error(`Failed to load dates: ${res.status}`);
+      }
+      
       const data = await res.json();
+      console.log('Received data from /api/dates:', data);
       blockedDates = data.dates.map(formatDateString);
       renderDates();
     } catch (e) {
+      console.error('Error in fetchDates:', e);
       showAlert(e.message);
     }
   }

@@ -28,7 +28,8 @@ router.get('/dates', requireUserOrAdmin, async (req, res) => {
     const dates = await ShopifyService.getSoldOutDates();
     res.json({ dates });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch dates' });
+    console.error('Error fetching dates in /api/dates:', error);
+    res.status(500).json({ error: 'Failed to fetch dates', details: error.message });
   }
 });
 
