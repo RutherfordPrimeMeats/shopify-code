@@ -38,6 +38,13 @@
   const addDateBtn = document.getElementById('addDateBtn');
   const saveDatesBtn = document.getElementById('saveDatesBtn');
 
+    // Initialize Flatpickr for an improved date picking experience
+    flatpickr(newDateInput, {
+      dateFormat: "Y-m-d",
+      allowInput: true,
+      minDate: "today" // optional, assuming they don't want to block pasted dates
+    });
+
   // Normalize formatting to YYYY-M-D
   function formatDateString(dStr) {
     const parts = dStr.split('-');
