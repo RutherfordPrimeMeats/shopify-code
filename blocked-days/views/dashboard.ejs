@@ -9,12 +9,13 @@
       <label for="newDate">Add a Date</label>
       <input type="date" id="newDate">
     </div>
-    <button id="addDateBtn" class="btn btn-secondary">Add</button>
+    <button id="addDateBtn" class="btn btn-primary"
+      style="padding: 0.75rem 2rem; box-shadow: 0 4px 12px rgba(88, 166, 255, 0.2);">Add</button>
   </div>
 
   <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;">
     <h3 style="font-size: 1.1rem; font-weight: 500;">Currently Blocked Dates</h3>
-    <button id="saveDatesBtn" class="btn btn-primary">Save to Shopify</button>
+    <button id="saveDatesBtn" class="btn btn-primary" style="display: none;">Save to Shopify</button>
   </div>
 
   <ul id="datesContainer" class="date-list">
@@ -31,6 +32,7 @@
 
 <script>
   let blockedDates = [];
+    let originalDates = [];
 
   const datesContainer = document.getElementById('datesContainer');
   const template = document.getElementById('dateItemTemplate');
@@ -71,6 +73,10 @@
   function renderDates() {
     datesContainer.innerHTML = '';
 
+    // Check for changes to show/hide save button
+    const hasChanges = JSON.stringify(blockedDates.slice().sort()) !== JSON.stringify(originalDates.slice().sort());
+    saveDatesBtn.style.display = hasChanges ? 'inline-flex' : 'none';
+
     // Sort dates
     blockedDates.sort((a, b) => {
       return new Date(a) - new Date(b);
@@ -85,6 +91,11 @@
       const btn = clone.querySelector('.remove-btn');
 
       span.textContent = dateStr;
+      
+      if (!originalDates.includes(dateStr)) {
+        li.classList.add('new-date');
+        span.innerHTML = `${dateStr} <span style="color: var(--success-color); font-size: 0.8em; margin-left: 0.5rem; font-weight: 600;">(Unsaved)</span>`;
+      }
       
       if (isPastDate(dateStr)) {
         li.classList.add('past');
@@ -128,6 +139,7 @@
       const data = await res.json();
       console.log('Received data from /api/dates:', data);
       blockedDates = data.dates.map(formatDateString);
+      originalDates = [...blockedDates];
       renderDates();
     } catch (e) {
       console.error('Error in fetchDates:', e);
@@ -162,6 +174,7 @@
       const data = await res.json();
       
       blockedDates = data.savedDates; // Server returns cleaned specific dates
+      originalDates = [...blockedDates];
       renderDates();
       
       showAlert('Dates successfully synchronized to Shopify.', 'success');
