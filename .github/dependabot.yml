@@ -1,8 +1,0 @@
-version: 2
-updates:
-  - package-ecosystem: "gomod"
-    directory: "/delivery-throttle"
-    assignees:
-      - "bogosj"
-    schedule:
-      interval: "daily"
