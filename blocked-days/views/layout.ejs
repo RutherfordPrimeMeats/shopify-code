@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blocked Days - Shopify Fulfillment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
+</head>
+<body>
+  
+  <header>
+    <h1>Blocked Days</h1>
+    <nav>
+      <% if (locals.user && locals.user.role !== 'guest') { %>
+        <a href="/dashboard">Dashboard</a>
+        <% if (locals.user.role === 'admin') { %>
+          <a href="/admin">Admin</a>
+        <% } %>
+        <a href="/auth/logout">Sign Out</a>
+      <% } else if (locals.user && locals.user.role === 'guest') { %>
+        <span style="color: var(--text-secondary); margin-left: 1.5rem;">Guest</span>
+        <a href="/auth/logout">Sign Out</a>
+      <% } %>
+    </nav>
+  </header>
+
+  <main>
+    <%- body %>
+  </main>
+
+  <script>
+    // Utility for showing alerts
+    function showAlert(msg, type = 'error', containerId = 'alerts') {
+      const container = document.getElementById(containerId);
+      if(!container) return;
+      container.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+      setTimeout(() => { container.innerHTML = ''; }, 5000);
+    }
+  </script>
+</body>
+</html>

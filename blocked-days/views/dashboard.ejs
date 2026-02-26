@@ -1,0 +1,161 @@
+<div class="glass-panel">
+  <h2>Blocked Fulfillment Dates</h2>
+  <p class="subtitle">Manage days where delivery and pickup are unavailable.</p>
+
+  <div id="alerts"></div>
+
+  <div style="display: flex; gap: 1rem; align-items: flex-end; margin-bottom: 2rem;">
+    <div class="input-group" style="margin-bottom: 0; flex-grow: 1;">
+      <label for="newDate">Add a Date</label>
+      <input type="date" id="newDate">
+    </div>
+    <button id="addDateBtn" class="btn btn-secondary">Add</button>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;">
+    <h3 style="font-size: 1.1rem; font-weight: 500;">Currently Blocked Dates</h3>
+    <button id="saveDatesBtn" class="btn btn-primary">Save to Shopify</button>
+  </div>
+
+  <ul id="datesContainer" class="date-list">
+    <!-- Dates will be injected here via JS -->
+  </ul>
+</div>
+
+<template id="dateItemTemplate">
+  <li class="date-item">
+    <span class="date-text"></span>
+    <button class="remove-btn">&times;</button>
+  </li>
+</template>
+
+<script>
+  let blockedDates = [];
+
+  const datesContainer = document.getElementById('datesContainer');
+  const template = document.getElementById('dateItemTemplate');
+  const newDateInput = document.getElementById('newDate');
+  const addDateBtn = document.getElementById('addDateBtn');
+  const saveDatesBtn = document.getElementById('saveDatesBtn');
+
+  // Normalize formatting to YYYY-M-D
+  function formatDateString(dStr) {
+    const parts = dStr.split('-');
+    if (parts.length === 3) {
+      return `${parseInt(parts[0])}-${parseInt(parts[1])}-${parseInt(parts[2])}`;
+    }
+    return dStr;
+  }
+
+  function isPastDate(dateStr) {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const year = parseInt(parts[0]);
+      const month = parseInt(parts[1]) - 1;
+      const day = parseInt(parts[2]);
+      const dateObj = new Date(year, month, day);
+      const now = new Date();
+      now.setHours(0,0,0,0);
+      return dateObj < now;
+    }
+    return false;
+  }
+
+  function renderDates() {
+    datesContainer.innerHTML = '';
+
+    // Sort dates
+    blockedDates.sort((a, b) => {
+      return new Date(a) - new Date(b);
+    });
+
+    let hasPastDates = false;
+
+    blockedDates.forEach(dateStr => {
+      const clone = template.content.cloneNode(true);
+      const li = clone.querySelector('li');
+      const span = clone.querySelector('.date-text');
+      const btn = clone.querySelector('.remove-btn');
+
+      span.textContent = dateStr;
+      
+      if (isPastDate(dateStr)) {
+        li.classList.add('past');
+        span.title = "This date is in the past and will be removed upon saving.";
+        hasPastDates = true;
+      }
+
+      btn.addEventListener('click', () => {
+        blockedDates = blockedDates.filter(d => d !== dateStr);
+        renderDates();
+      });
+
+      datesContainer.appendChild(clone);
+    });
+
+    if (hasPastDates) {
+      if(!document.getElementById('pastDateAlert')) {
+         const alertHTML = `<div id="pastDateAlert" class="alert alert-warning" style="margin-top: 1rem;">
+          Highlighted dates are in the past. They will be automatically cleared from Shopify when you click Save.
+        </div>`;
+        datesContainer.insertAdjacentHTML('beforebegin', alertHTML);
+      }
+    } else {
+      const existingAlert = document.getElementById('pastDateAlert');
+      if(existingAlert) existingAlert.remove();
+    }
+  }
+
+  async function fetchDates() {
+    try {
+      const res = await fetch('/api/dates');
+      if (!res.ok) throw new Error('Failed to load dates');
+      const data = await res.json();
+      blockedDates = data.dates.map(formatDateString);
+      renderDates();
+    } catch (e) {
+      showAlert(e.message);
+    }
+  }
+
+  addDateBtn.addEventListener('click', () => {
+    const val = newDateInput.value;
+    if (!val) return;
+    
+    const formatted = formatDateString(val);
+    if (!blockedDates.includes(formatted)) {
+      blockedDates.push(formatted);
+      renderDates();
+    }
+    newDateInput.value = '';
+  });
+
+  saveDatesBtn.addEventListener('click', async () => {
+    saveDatesBtn.textContent = 'Saving...';
+    saveDatesBtn.disabled = true;
+
+    try {
+      const res = await fetch('/api/dates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dates: blockedDates })
+      });
+      
+      if (!res.ok) throw new Error('Failed to save dates');
+      const data = await res.json();
+      
+      blockedDates = data.savedDates; // Server returns cleaned specific dates
+      renderDates();
+      
+      showAlert('Dates successfully synchronized to Shopify.', 'success');
+    } catch (e) {
+      showAlert(e.message);
+    } finally {
+      saveDatesBtn.textContent = 'Save to Shopify';
+      saveDatesBtn.disabled = false;
+    }
+  });
+
+  // Load initial dates
+  document.addEventListener('DOMContentLoaded', fetchDates);
+</script>

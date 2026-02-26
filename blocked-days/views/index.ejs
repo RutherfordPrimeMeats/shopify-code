@@ -1,0 +1,100 @@
+<div class="glass-panel" style="max-width: 450px; margin: 4rem auto;">
+  <h2>Welcome</h2>
+  <p class="subtitle">Authenticate with your Passkey</p>
+  
+  <div id="alerts"></div>
+
+  <div class="input-group">
+    <label for="username">Username</label>
+    <input type="text" id="username" placeholder="Enter username" autocomplete="username webauthn">
+  </div>
+
+  <div class="auth-form mt-4">
+    <button id="btnLogin" class="btn btn-primary">Sign In with Passkey</button>
+    
+    <% if (locals.registrationEnabled) { %>
+      <div style="text-align: center; margin: 1rem 0; color: var(--text-secondary); font-size: 0.9rem;">
+        &mdash; or &mdash;
+      </div>
+      <button id="btnRegister" class="btn btn-secondary">Create a New Passkey</button>
+    <% } %>
+  </div>
+</div>
+
+<script>
+  const { startAuthentication, startRegistration } = SimpleWebAuthnBrowser;
+
+  document.getElementById('btnLogin').addEventListener('click', async () => {
+    const username = document.getElementById('username').value.trim();
+    if (!username) return showAlert('Please enter a username');
+
+    try {
+      // 1. Get options
+      const optRes = await fetch('/auth/login/begin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username })
+      });
+      const options = await optRes.json();
+      
+      if (options.error) throw new Error(options.error);
+
+      // 2. Start WebAuthn
+      const asseResp = await startAuthentication(options);
+
+      // 3. Verify
+      const verRes = await fetch('/auth/login/finish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(asseResp)
+      });
+      const verification = await verRes.json();
+
+      if (verification.verified) {
+        window.location.reload();
+      } else {
+        showAlert(verification.error || 'Authentication failed');
+      }
+    } catch (e) {
+      console.error(e);
+      showAlert(e.message || 'An error occurred during sign in');
+    }
+  });
+
+  const btnRegister = document.getElementById('btnRegister');
+  if (btnRegister) {
+    btnRegister.addEventListener('click', async () => {
+      const username = document.getElementById('username').value.trim();
+      if (!username) return showAlert('Please enter a username');
+
+      try {
+        const optRes = await fetch('/auth/register/begin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username })
+        });
+        const options = await optRes.json();
+        
+        if (options.error) throw new Error(options.error);
+
+        const attResp = await startRegistration(options);
+
+        const verRes = await fetch('/auth/register/finish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(attResp)
+        });
+        const verification = await verRes.json();
+
+        if (verification.verified) {
+          window.location.reload();
+        } else {
+          showAlert(verification.error || 'Registration failed');
+        }
+      } catch (e) {
+        console.error(e);
+        showAlert(e.message || 'An error occurred during registration');
+      }
+    });
+  }
+</script>

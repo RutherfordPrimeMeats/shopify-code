@@ -1,0 +1,56 @@
+<div class="glass-panel" style="max-width: 600px; margin: 2rem auto;">
+  <h2>Admin Dashboard</h2>
+  <p class="subtitle">System settings and configuration</p>
+
+  <div id="alerts"></div>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--glass-border);">
+    <div>
+      <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">User Registration</h3>
+      <p style="color: var(--text-secondary); font-size: 0.9rem;">Allow new users to create accounts and passkeys.</p>
+    </div>
+    
+    <label class="switch">
+      <input type="checkbox" id="registrationToggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const toggle = document.getElementById('registrationToggle');
+
+    // Fetch initial state
+    try {
+      const res = await fetch('/api/admin/settings');
+      if (res.ok) {
+        const data = await res.json();
+        toggle.checked = data.registration_enabled;
+      }
+    } catch (e) {
+      console.error(e);
+      showAlert('Failed to load settings');
+    }
+
+    // Handle toggle
+    toggle.addEventListener('change', async (e) => {
+      const enabled = e.target.checked;
+      try {
+        const res = await fetch('/api/admin/settings/registration', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enabled })
+        });
+        
+        if (!res.ok) throw new Error('Failed to update setting');
+        const data = await res.json();
+        toggle.checked = data.registration_enabled; // confirm state
+      } catch (err) {
+        console.error(err);
+        showAlert(err.message);
+        e.target.checked = !enabled; // revert
+      }
+    });
+  });
+</script>
