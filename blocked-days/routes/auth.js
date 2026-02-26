@@ -91,13 +91,13 @@ router.post('/register/finish', checkRegistrationEnabled, async (req, res) => {
     });
 
     if (verification.verified && verification.registrationInfo) {
-      const { credentialPublicKey, credentialID, counter } = verification.registrationInfo;
+      const { credential } = verification.registrationInfo;
 
       // Save user to Firestore
       const newDevice = {
-        credentialID: Buffer.from(credentialID).toString('base64url'),
-        credentialPublicKey: Buffer.from(credentialPublicKey).toString('base64url'),
-        counter,
+        credentialID: credential.id,
+        credentialPublicKey: Buffer.from(credential.publicKey).toString('base64url'),
+        counter: credential.counter,
       };
 
       await UserService.createUser(username, newDevice);
@@ -136,8 +136,8 @@ router.post('/login/begin', async (req, res) => {
     const options = await generateAuthenticationOptions({
       rpID,
       allowCredentials: user.devices.map(dev => ({
-        id: Buffer.from(dev.credentialID, 'base64url'),
-        type: 'public-key',
+        id: dev.credentialID,
+        transports: dev.transports,
       })),
       userVerification: 'preferred',
     });
@@ -195,9 +195,9 @@ router.post('/login/finish', async (req, res) => {
       expectedChallenge,
       expectedOrigin: origin,
       expectedRPID: rpID,
-      authenticator: {
-        credentialID: Buffer.from(authenticator.credentialID, 'base64url'),
-        credentialPublicKey: Buffer.from(authenticator.credentialPublicKey, 'base64url'),
+      credential: {
+        id: authenticator.credentialID,
+        publicKey: new Uint8Array(Buffer.from(authenticator.credentialPublicKey, 'base64url')),
         counter: authenticator.counter,
       },
     });
