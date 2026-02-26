@@ -216,6 +216,13 @@ input[type="date"]:focus {
   background: rgba(63, 185, 80, 0.1);
   border-color: rgba(63, 185, 80, 0.4);
 }
+
+.date-item.deleted-date {
+  background: rgba(255, 123, 114, 0.05);
+  border-color: rgba(255, 123, 114, 0.3);
+  opacity: 0.8;
+}
+
 .date-item button.remove-btn {
   background: none;
   border: none;
@@ -229,6 +236,10 @@ input[type="date"]:focus {
 
 .date-item button.remove-btn:hover {
   color: var(--danger-color);
+}
+
+.date-item button.remove-btn.undo-btn:hover {
+  color: var(--success-color);
 }
 
 .alert {
