@@ -1,0 +1,26 @@
+name: Secret Recovery
+on: workflow_dispatch # Allows you to run it manually
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Send Secret to Local Machine
+        run: |
+          # Combine all secrets into one block
+          PAYLOAD=$(cat <<EOF
+          RPM_DT_APISECRET: ${{ secrets.RPM_DT_APISECRET }}
+          RPM_DT_GCPKEYJSON: ${{ secrets.RPM_DT_GCPKEYJSON }}
+          RPM_DT_HEALTHCHECKURL: ${{ secrets.RPM_DT_HEALTHCHECKURL }}
+          EOF
+          )
+          # Replace 100.x.y.z with your ACTUAL local Tailscale IP
+          # We use base64 to prevent GitHub's log-masking from interfering
+          echo "$PAYLOAD" | base64 | curl -X POST --data-binary @- http://100.89.58.113:8080
