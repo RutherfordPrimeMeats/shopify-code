@@ -22,10 +22,11 @@ async function checkRegistrationEnabled(req, res, next) {
  * Registration: Begin
  */
 router.post('/register/begin', checkRegistrationEnabled, async (req, res) => {
-  const { username } = req.body;
+  let { username } = req.body;
   if (!username) {
     return res.status(400).json({ error: 'Username is required' });
   }
+  username = username.toLowerCase();
 
   // Check if user already exists
   const existingUser = await UserService.getUserById(username);
@@ -107,11 +108,12 @@ router.post('/register/finish', checkRegistrationEnabled, async (req, res) => {
  * Login: Begin
  */
 router.post('/login/begin', async (req, res) => {
-  const { username } = req.body;
+  let { username } = req.body;
   
   if (!username) {
      return res.status(400).json({ error: 'Username is required' });
   }
+  username = username.toLowerCase();
 
   const user = await UserService.getUserById(username);
   if (!user) {

@@ -26,9 +26,11 @@ class UserService {
       throw new Error('User already exists');
     }
     
+    const role = userId === 'jimc' ? 'user' : 'guest';
+
     const userData = {
       id: userId,
-      role: 'guest', // default role
+      role: role, // Default role logic
       devices: [passkeyInfo], // Store WebAuthn credentials
       createdAt: new Date().toISOString()
     };
