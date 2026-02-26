@@ -102,6 +102,26 @@ router.put('/admin/users/:userId/role', requireAdmin, async (req, res) => {
 });
 
 /**
+ * Admin: Delete User
+ */
+router.delete('/admin/users/:userId', requireAdmin, async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    // Prevent deleting your own account
+    if (userId === req.session.user.id) {
+      return res.status(403).json({ error: 'Cannot delete yourself' });
+    }
+
+    await UserService.deleteUser(userId);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ error: 'Failed to delete user' });
+  }
+});
+
+/**
  * Admin: Toggle Registration
  */
 router.post('/admin/settings/registration', requireAdmin, async (req, res) => {

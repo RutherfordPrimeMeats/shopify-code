@@ -76,6 +76,14 @@ class UserService {
   }
 
   /**
+   * Delete a user
+   */
+  static async deleteUser(userId) {
+    const docRef = db.collection(USERS_COLLECTION).doc(userId);
+    await docRef.delete();
+  }
+
+  /**
    * Get all users
    */
   static async getAllUsers() {
