@@ -1,7 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const { Firestore } = require('@google-cloud/firestore');
-const { FirestoreStore } = require('@google-cloud/connect-firestore');
+const { FirestoreStore } = require('firestore-store');
 const dotenv = require('dotenv');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
@@ -31,8 +31,8 @@ SettingsService.initSettings().catch(console.error);
 app.use(
   session({
     store: new FirestoreStore({
-      dataset: firestore,
-      kind: 'express-sessions',
+      database: firestore,
+      collection: 'express-sessions',
     }),
     secret: process.env.SESSION_SECRET || 'a-very-secret-key-12345',
     resave: false,
