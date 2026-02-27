@@ -26,6 +26,13 @@ class PushService {
       console.error(`[PushService] Error sending push notification to endpoint ${subscription.endpoint}:`, error);
       if (error.statusCode) {
         console.error(`[PushService] web-push status code: ${error.statusCode}`);
+        if (error.statusCode === 410 || error.statusCode === 404) {
+          console.log(`[PushService] Removing invalid subscription: ${subscription.endpoint}`);
+          const UserService = require('./UserService');
+          await UserService.removePushSubscriptionByEndpoint(subscription.endpoint).catch(err => {
+            console.error('[PushService] Failed to clean up invalid subscription', err);
+          });
+        }
       }
       if (error.body) {
         console.error(`[PushService] web-push error body: ${error.body}`);
@@ -46,10 +53,10 @@ class PushService {
     
     for (const user of users) {
       if (user.role === 'admin') {
-        const adminUser = await UserService.getUserById(user.id);
-        if (adminUser && adminUser.pushSubscription) {
-          console.log(`[PushService] Found admin with subscription: ${user.username || user.id}`);
-          adminSubscriptions.push(adminUser.pushSubscription);
+        const subs = await UserService.getPushSubscriptions(user.id);
+        if (subs && subs.length > 0) {
+          console.log(`[PushService] Found admin with ${subs.length} subscriptions: ${user.username || user.id}`);
+          adminSubscriptions.push(...subs);
         } else {
           console.log(`[PushService] Found admin, but NO subscription: ${user.username || user.id}`);
         }
@@ -66,9 +73,10 @@ class PushService {
    */
   static async sendToUser(userId, payload) {
     const UserService = require('./UserService');
-    const user = await UserService.getUserById(userId);
-    if (user && user.pushSubscription) {
-      await this.sendNotification(user.pushSubscription, payload);
+    const subs = await UserService.getPushSubscriptions(userId);
+    if (subs && subs.length > 0) {
+      const promises = subs.map(sub => this.sendNotification(sub, payload));
+      await Promise.allSettled(promises);
     }
   }
 }

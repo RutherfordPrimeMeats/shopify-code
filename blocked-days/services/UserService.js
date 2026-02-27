@@ -124,15 +124,62 @@ class UserService {
    */
   static async savePushSubscription(userId, subscription) {
     const docRef = db.collection(USERS_COLLECTION).doc(userId);
-    await docRef.update({ pushSubscription: subscription });
+    const doc = await docRef.get();
+    if (!doc.exists) return;
+
+    const data = doc.data();
+    let pushSubscriptions = data.pushSubscriptions || [];
+
+    // In case there is a legacy single subscription, migrate it
+    if (data.pushSubscription && !pushSubscriptions.some(sub => sub.endpoint === data.pushSubscription.endpoint)) {
+      pushSubscriptions.push(data.pushSubscription);
+    }
+
+    const existingIndex = pushSubscriptions.findIndex(sub => sub.endpoint === subscription.endpoint);
+    if (existingIndex >= 0) {
+      pushSubscriptions[existingIndex] = subscription;
+    } else {
+      pushSubscriptions.push(subscription);
+    }
+
+    await docRef.update({
+      pushSubscriptions,
+      pushSubscription: Firestore.FieldValue.delete() // clean up old field optionally
+    });
   }
 
   /**
-   * Get Web Push subscription
+   * Get Web Push subscriptions (returns array)
    */
-  static async getPushSubscription(userId) {
+  static async getPushSubscriptions(userId) {
     const user = await this.getUserById(userId);
-    return user ? user.pushSubscription : null;
+    if (!user) return [];
+
+    let subs = user.pushSubscriptions || [];
+    if (user.pushSubscription && !subs.some(sub => sub.endpoint === user.pushSubscription.endpoint)) {
+      subs.push(user.pushSubscription);
+    }
+    return subs;
+  }
+
+  /**
+   * Remove a push subscription by its endpoint
+   */
+  static async removePushSubscriptionByEndpoint(endpoint) {
+    const snapshot = await db.collection(USERS_COLLECTION).get();
+    for (const doc of snapshot.docs) {
+      const data = doc.data();
+      let pushSubscriptions = data.pushSubscriptions || [];
+      if (data.pushSubscription && data.pushSubscription.endpoint === endpoint) {
+        // Clear legacy
+        await doc.ref.update({ pushSubscription: Firestore.FieldValue.delete() });
+      }
+
+      const filtered = pushSubscriptions.filter(sub => sub.endpoint !== endpoint);
+      if (filtered.length !== pushSubscriptions.length) {
+        await doc.ref.update({ pushSubscriptions: filtered });
+      }
+    }
   }
 }
 
