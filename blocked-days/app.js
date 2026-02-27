@@ -33,6 +33,21 @@ app.use(
     store: new FirestoreStore({
       database: firestore,
       collection: 'express-sessions',
+      parser: {
+        read(doc) {
+          if (doc.session) {
+            try {
+              return JSON.parse(doc.session);
+            } catch (e) {
+              return doc;
+            }
+          }
+          return doc;
+        },
+        save(doc) {
+          return { session: JSON.stringify(doc) };
+        }
+      }
     }),
     secret: process.env.SESSION_SECRET || 'a-very-secret-key-12345',
     resave: false,
