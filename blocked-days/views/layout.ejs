@@ -74,15 +74,58 @@
               notificationModal.style.display = 'flex';
             }
 
+            // Helper to convert VAPID key
+            function urlBase64ToUint8Array(base64String) {
+              const padding = '='.repeat((4 - base64String.length % 4) % 4);
+              const base64 = (base64String + padding)
+                .replace(/\-/g, '+')
+                .replace(/_/g, '/');
+              const rawData = window.atob(base64);
+              const outputArray = new Uint8Array(rawData.length);
+              for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+              }
+              return outputArray;
+            }
+
+            // Function to handle push subscription
+            async function subscribeToPush() {
+              try {
+                const reg = await navigator.serviceWorker.ready;
+                const vapidRes = await fetch('/api/vapid-key');
+                const { publicKey } = await vapidRes.json();
+
+                const subscription = await reg.pushManager.subscribe({
+                  userVisibleOnly: true,
+                  applicationServerKey: urlBase64ToUint8Array(publicKey)
+                });
+
+                await fetch('/api/push-subscribe', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ subscription })
+                });
+                console.log('Push subscription successful');
+              } catch (err) {
+                console.error('Failed to subscribe to push:', err);
+              }
+            }
+
             allowBtn.addEventListener('click', async () => {
               const permission = await Notification.requestPermission();
               if (permission === 'granted') {
                 notificationModal.style.display = 'none';
+                await subscribeToPush();
                 new Notification('App is ready', { body: 'You will now receive real-time updates.' });
               } else {
                 alert('Notifications must be enabled for the app to work correctly.');
               }
             });
+
+            // Automatically subscribe if permission was already granted previously
+            if (Notification.permission === 'granted') {
+              subscribeToPush();
+            }
 
             // Initialize SSE
             const eventSource = new EventSource('/api/events');

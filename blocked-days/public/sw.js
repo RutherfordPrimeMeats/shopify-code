@@ -51,3 +51,29 @@ self.addEventListener('activate', event => {
     })
   );
 });
+
+self.addEventListener('push', event => {
+  if (event.data) {
+    try {
+      const data = event.data.json();
+      const options = {
+        body: data.body,
+        icon: '/icons/icon-192x192.png',
+        badge: '/icons/icon-192x192.png',
+        data: data.url || '/'
+      };
+      event.waitUntil(
+        self.registration.showNotification(data.title || 'Blocked Days', options)
+      );
+    } catch (e) {
+      console.error('Push event error', e);
+    }
+  }
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil(
+    clients.openWindow(event.notification.data)
+  );
+});

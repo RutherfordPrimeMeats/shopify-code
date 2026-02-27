@@ -118,6 +118,22 @@ class UserService {
     }
     return foundUser;
   }
+
+  /**
+   * Save Web Push subscription
+   */
+  static async savePushSubscription(userId, subscription) {
+    const docRef = db.collection(USERS_COLLECTION).doc(userId);
+    await docRef.update({ pushSubscription: subscription });
+  }
+
+  /**
+   * Get Web Push subscription
+   */
+  static async getPushSubscription(userId) {
+    const user = await this.getUserById(userId);
+    return user ? user.pushSubscription : null;
+  }
 }
 
 module.exports = UserService;

@@ -3,6 +3,7 @@ const { generateRegistrationOptions, verifyRegistrationResponse, generateAuthent
 const UserService = require('../services/UserService');
 const SettingsService = require('../services/SettingsService');
 const SSEManager = require('../services/SSEManager');
+const PushService = require('../services/PushService');
 
 const router = express.Router();
 
@@ -110,6 +111,10 @@ router.post('/register/finish', checkRegistrationEnabled, async (req, res) => {
 
       // Notify admins
       SSEManager.sendToAdmins('user_registered', { username });
+      PushService.sendToAdmins({
+        title: 'New User Registration',
+        body: `User ${username} has registered.`
+      });
 
       return res.json({ verified: true });
     }
@@ -223,6 +228,10 @@ router.post('/login/finish', async (req, res) => {
 
       // Notify admins
       SSEManager.sendToAdmins('user_logged_in', { username: user.id });
+      PushService.sendToAdmins({
+        title: 'User Logged In',
+        body: `User ${user.id} just logged in.`
+      });
 
       return res.json({ verified: true });
     }
