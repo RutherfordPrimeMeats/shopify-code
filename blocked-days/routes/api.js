@@ -3,6 +3,7 @@ const ShopifyService = require('../services/ShopifyService');
 const SettingsService = require('../services/SettingsService');
 const SSEManager = require('../services/SSEManager');
 const PushService = require('../services/PushService');
+const UserService = require('../services/UserService');
 const router = express.Router();
 
 // Middleware: Require user or admin role
@@ -115,8 +116,6 @@ router.get('/admin/settings', requireAdmin, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch settings' });
   }
 });
-
-const UserService = require('../services/UserService');
 
 /**
  * Admin: Get Users

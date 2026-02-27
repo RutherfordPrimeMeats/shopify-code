@@ -1,4 +1,4 @@
-const { Firestore } = require('@google-cloud/firestore');
+const { Firestore, FieldValue } = require('@google-cloud/firestore');
 
 const db = new Firestore({ databaseId: 'rutherford-prime-meats' });
 const USERS_COLLECTION = 'users';
@@ -144,7 +144,7 @@ class UserService {
 
     await docRef.update({
       pushSubscriptions,
-      pushSubscription: Firestore.FieldValue.delete() // clean up old field optionally
+      pushSubscription: FieldValue.delete() // clean up old field optionally
     });
   }
 
@@ -172,7 +172,7 @@ class UserService {
       let pushSubscriptions = data.pushSubscriptions || [];
       if (data.pushSubscription && data.pushSubscription.endpoint === endpoint) {
         // Clear legacy
-        await doc.ref.update({ pushSubscription: Firestore.FieldValue.delete() });
+        await doc.ref.update({ pushSubscription: FieldValue.delete() });
       }
 
       const filtered = pushSubscriptions.filter(sub => sub.endpoint !== endpoint);
