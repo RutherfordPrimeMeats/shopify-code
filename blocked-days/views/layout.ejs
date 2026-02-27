@@ -102,10 +102,13 @@
                 const vapidRes = await fetch('/api/vapid-key');
                 const { publicKey } = await vapidRes.json();
 
-                const subscription = await reg.pushManager.subscribe({
-                  userVisibleOnly: true,
-                  applicationServerKey: urlBase64ToUint8Array(publicKey)
-                });
+                let subscription = await reg.pushManager.getSubscription();
+                if (!subscription) {
+                  subscription = await reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(publicKey)
+                  });
+                }
 
                 await fetch('/api/push-subscribe', {
                   method: 'POST',

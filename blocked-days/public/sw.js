@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rpm-blocked-days-v3';
+const CACHE_NAME = 'rpm-blocked-days-v4';
 const urlsToCache = [
   '/css/style.css',
   '/icons/icon-192x192.png',
@@ -67,17 +67,27 @@ self.addEventListener('push', event => {
     try {
       const data = event.data.json();
       console.log('[ServiceWorker] Push data received:', data);
+
+      const baseUrl = self.registration.scope || self.location.origin;
+      const iconUrl = new URL('/icons/icon-192x192.png', baseUrl).href;
+
       const options = {
         body: data.body,
-        icon: '/icons/icon-192x192.png',
-        badge: '/icons/icon-192x192.png',
+        icon: iconUrl,
+        badge: iconUrl,
+        vibrate: [200, 100, 200], // Often helps on Android
+        requireInteraction: true, // Keep it on screen
         data: data.url || '/'
       };
       console.log('[ServiceWorker] Showing notification with options:', options);
       event.waitUntil(
         self.registration.showNotification(data.title || 'Blocked Days', options)
           .then(() => console.log('[ServiceWorker] Notification shown successfully'))
-          .catch(err => console.error('[ServiceWorker] Error showing notification:', err))
+          .catch(err => {
+            console.error('[ServiceWorker] Error showing notification:', err);
+            // Fallback incase absolute url icon failed
+            return self.registration.showNotification('Blocked Days (Fallback)', { body: 'Notification error fallback' });
+          })
       );
     } catch (e) {
       console.error('[ServiceWorker] Push event parse error:', e);

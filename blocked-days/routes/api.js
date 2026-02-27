@@ -200,4 +200,21 @@ router.post('/admin/settings/registration', requireAdmin, async (req, res) => {
   }
 });
 
+/**
+ * Test Push Notification
+ */
+router.post('/push-test', requireUserOrAdmin, async (req, res) => {
+  try {
+    await PushService.sendToUser(req.session.user.id, {
+      title: 'Test Notification',
+      body: 'This is a test notification from Blocked Days! If you see this, push is working.',
+      url: '/'
+    });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error sending test push:', error);
+    res.status(500).json({ error: 'Failed to send test push' });
+  }
+});
+
 module.exports = router;
