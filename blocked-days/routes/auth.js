@@ -3,7 +3,7 @@ const { generateRegistrationOptions, verifyRegistrationResponse, generateAuthent
 const UserService = require('../services/UserService');
 const SettingsService = require('../services/SettingsService');
 const SSEManager = require('../services/SSEManager');
-const NtfyService = require('../services/NtfyService');
+const DiscordService = require('../services/DiscordService');
 
 const router = express.Router();
 
@@ -111,7 +111,7 @@ router.post('/register/finish', checkRegistrationEnabled, async (req, res) => {
 
       // Notify admins
       SSEManager.sendToAdmins('user_registered', { username });
-      NtfyService.sendAdminNotification(
+      DiscordService.sendAdminNotification(
         'New User Registration',
         `User ${username} has registered.`
       );
@@ -228,7 +228,7 @@ router.post('/login/finish', async (req, res) => {
 
       // Notify admins
       SSEManager.sendToAdmins('user_logged_in', { username: user.id });
-      NtfyService.sendAdminNotification(
+      DiscordService.sendAdminNotification(
         'User Logged In',
         `User ${user.id} just logged in.`
       );

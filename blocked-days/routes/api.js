@@ -2,7 +2,7 @@ const express = require('express');
 const ShopifyService = require('../services/ShopifyService');
 const SettingsService = require('../services/SettingsService');
 const SSEManager = require('../services/SSEManager');
-const NtfyService = require('../services/NtfyService');
+const DiscordService = require('../services/DiscordService');
 const UserService = require('../services/UserService');
 const router = express.Router();
 
@@ -72,7 +72,7 @@ router.post('/dates', requireUserOrAdmin, async (req, res) => {
     const savedDates = await ShopifyService.saveSoldOutDates(dates);
     // Notify admins that dates have been updated
     SSEManager.sendToAdmins('dates_updated', { user: req.session.user.id });
-    NtfyService.sendAdminNotification(
+    DiscordService.sendAdminNotification(
       'Dates Updated',
       `User ${req.session.user.id} updated blocked dates in Shopify.`
     );
