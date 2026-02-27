@@ -1,6 +1,5 @@
-const CACHE_NAME = 'rpm-blocked-days-v1';
+const CACHE_NAME = 'rpm-blocked-days-v3';
 const urlsToCache = [
-  '/',
   '/css/style.css',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
@@ -19,10 +18,20 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('fetch', event => {
+  // Navigation requests (HTML pages) -> Network First
+  if (event.request.mode === 'navigate' || event.request.headers.get('accept').includes('text/html')) {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        return caches.match(event.request);
+      })
+    );
+    return;
+  }
+
+  // Other requests -> Cache First
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        // Cache hit - return response
         if (response) {
           return response;
         }
