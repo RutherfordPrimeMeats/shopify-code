@@ -19,8 +19,7 @@
     "express": "^5.2.1",
     "express-ejs-layouts": "^2.5.1",
     "express-session": "^1.19.0",
-    "firestore-store": "^2.0.2",
-    "web-push": "^3.6.7"
+    "firestore-store": "^2.0.2"
   },
   "devDependencies": {
     "jest": "^29.7.0",

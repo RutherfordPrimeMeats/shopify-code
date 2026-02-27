@@ -2,7 +2,7 @@ const express = require('express');
 const ShopifyService = require('../services/ShopifyService');
 const SettingsService = require('../services/SettingsService');
 const SSEManager = require('../services/SSEManager');
-const PushService = require('../services/PushService');
+const NtfyService = require('../services/NtfyService');
 const UserService = require('../services/UserService');
 const router = express.Router();
 
@@ -44,30 +44,7 @@ router.get('/events', (req, res) => {
   SSEManager.addClient(req.session.user.id, req.session.user.role, res);
 });
 
-/**
- * Save Push Subscription
- */
-router.post('/push-subscribe', requireUserOrAdmin, async (req, res) => {
-  const { subscription } = req.body;
-  if (!subscription) {
-    return res.status(400).json({ error: 'Subscription is required' });
-  }
 
-  try {
-    await UserService.savePushSubscription(req.session.user.id, subscription);
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Error saving push subscription:', error);
-    res.status(500).json({ error: 'Failed to save subscription' });
-  }
-});
-
-/**
- * Get VAPID Public Key
- */
-router.get('/vapid-key', requireUserOrAdmin, (req, res) => {
-  res.json({ publicKey: process.env.VAPID_PUBLIC_KEY });
-});
 
 /**
  * Get current blocked dates
@@ -95,10 +72,10 @@ router.post('/dates', requireUserOrAdmin, async (req, res) => {
     const savedDates = await ShopifyService.saveSoldOutDates(dates);
     // Notify admins that dates have been updated
     SSEManager.sendToAdmins('dates_updated', { user: req.session.user.id });
-    PushService.sendToAdmins({
-      title: 'Dates Updated',
-      body: `User ${req.session.user.id} updated blocked dates in Shopify.`
-    });
+    NtfyService.sendAdminNotification(
+      'Dates Updated',
+      `User ${req.session.user.id} updated blocked dates in Shopify.`
+    );
     res.json({ success: true, savedDates });
   } catch (error) {
     res.status(500).json({ error: 'Failed to save dates' });
@@ -149,13 +126,7 @@ router.put('/admin/users/:userId/role', requireAdmin, async (req, res) => {
     await UserService.updateUserRole(userId, role);
     // Notify the user about their role change
     SSEManager.sendToUser(userId, 'role_changed', { role });
-    // If promoted from guest to user
-    if (role === 'user') {
-      PushService.sendToUser(userId, {
-        title: 'Role Updated',
-        body: `Your role has been updated to: ${role}. You can now access the dashboard.`
-      });
-    }
+
     res.json({ success: true, newRole: role });
   } catch (error) {
     console.error('Error updating user role:', error);
@@ -200,21 +171,6 @@ router.post('/admin/settings/registration', requireAdmin, async (req, res) => {
   }
 });
 
-/**
- * Test Push Notification
- */
-router.post('/push-test', requireUserOrAdmin, async (req, res) => {
-  try {
-    await PushService.sendToUser(req.session.user.id, {
-      title: 'Test Notification',
-      body: 'This is a test notification from Blocked Days! If you see this, push is working.',
-      url: '/'
-    });
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Error sending test push:', error);
-    res.status(500).json({ error: 'Failed to send test push' });
-  }
-});
+
 
 module.exports = router;
