@@ -13,11 +13,23 @@ class PushService {
    * Send a push notification to a specific subscription
    */
   static async sendNotification(subscription, payload) {
-    if (!subscription) return;
+    if (!subscription) {
+      console.log('[PushService] Tried to send notification but subscription is missing.');
+      return;
+    }
     try {
+      console.log(`[PushService] Attempting to send push to endpoint: ${subscription.endpoint}`);
+      console.log(`[PushService] Payload: ${JSON.stringify(payload)}`);
       await webPush.sendNotification(subscription, JSON.stringify(payload));
+      console.log(`[PushService] Successfully sent push to endpoint: ${subscription.endpoint}`);
     } catch (error) {
-      console.error('Error sending push notification:', error);
+      console.error(`[PushService] Error sending push notification to endpoint ${subscription.endpoint}:`, error);
+      if (error.statusCode) {
+        console.error(`[PushService] web-push status code: ${error.statusCode}`);
+      }
+      if (error.body) {
+        console.error(`[PushService] web-push error body: ${error.body}`);
+      }
       // If the subscription is no longer valid (e.g. 410 Gone), we should ideally remove it from the DB.
       // For now, we'll just log the error.
     }
@@ -29,17 +41,22 @@ class PushService {
   static async sendToAdmins(payload) {
     const UserService = require('./UserService');
     const users = await UserService.getAllUsers();
+    console.log(`[PushService] sendToAdmins called. Found ${users.length} total users.`);
     const adminSubscriptions = [];
     
     for (const user of users) {
       if (user.role === 'admin') {
         const adminUser = await UserService.getUserById(user.id);
         if (adminUser && adminUser.pushSubscription) {
+          console.log(`[PushService] Found admin with subscription: ${user.username || user.id}`);
           adminSubscriptions.push(adminUser.pushSubscription);
+        } else {
+          console.log(`[PushService] Found admin, but NO subscription: ${user.username || user.id}`);
         }
       }
     }
 
+    console.log(`[PushService] Total admin subscriptions ready to send: ${adminSubscriptions.length}`);
     const promises = adminSubscriptions.map(sub => this.sendNotification(sub, payload));
     await Promise.allSettled(promises);
   }

@@ -62,21 +62,28 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('push', event => {
+  console.log('[ServiceWorker] Push event received!', event);
   if (event.data) {
     try {
       const data = event.data.json();
+      console.log('[ServiceWorker] Push data received:', data);
       const options = {
         body: data.body,
         icon: '/icons/icon-192x192.png',
         badge: '/icons/icon-192x192.png',
         data: data.url || '/'
       };
+      console.log('[ServiceWorker] Showing notification with options:', options);
       event.waitUntil(
         self.registration.showNotification(data.title || 'Blocked Days', options)
+          .then(() => console.log('[ServiceWorker] Notification shown successfully'))
+          .catch(err => console.error('[ServiceWorker] Error showing notification:', err))
       );
     } catch (e) {
-      console.error('Push event error', e);
+      console.error('[ServiceWorker] Push event parse error:', e);
     }
+  } else {
+    console.log('[ServiceWorker] Push event triggered but no data was provided');
   }
 });
 
