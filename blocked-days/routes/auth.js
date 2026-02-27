@@ -2,6 +2,7 @@ const express = require('express');
 const { generateRegistrationOptions, verifyRegistrationResponse, generateAuthenticationOptions, verifyAuthenticationResponse } = require('@simplewebauthn/server');
 const UserService = require('../services/UserService');
 const SettingsService = require('../services/SettingsService');
+const SSEManager = require('../services/SSEManager');
 
 const router = express.Router();
 
@@ -106,6 +107,9 @@ router.post('/register/finish', checkRegistrationEnabled, async (req, res) => {
       req.session.user = { id: username, role: 'guest' };
       req.session.currentChallenge = undefined;
       req.session.registeringUsername = undefined;
+
+      // Notify admins
+      SSEManager.sendToAdmins('user_registered', { username });
 
       return res.json({ verified: true });
     }
@@ -216,6 +220,9 @@ router.post('/login/finish', async (req, res) => {
       req.session.user = { id: user.id, role: user.role };
       req.session.currentChallenge = undefined;
       req.session.loginUsername = undefined;
+
+      // Notify admins
+      SSEManager.sendToAdmins('user_logged_in', { username: user.id });
 
       return res.json({ verified: true });
     }

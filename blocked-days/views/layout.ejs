@@ -19,10 +19,9 @@
 <body>
   
   <header>
-    <h1>Blocked Days</h1>
+    <h1><a href="/" style="color: inherit; text-decoration: none;">Blocked Days</a></h1>
     <nav>
-      <% if (locals.user && locals.user.role !== 'guest') { %>
-        <a href="/dashboard">Dashboard</a>
+      <% if (locals.user && locals.user.role !=='guest' ) { %>
         <% if (locals.user.role === 'admin') { %>
           <a href="/admin">Admin</a>
         <% } %>
@@ -43,6 +42,17 @@
     <button id="pwa-update-btn" class="btn btn-primary">Update</button>
   </div>
 
+  <div id="notification-modal" class="modal-overlay"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
+    <div
+      style="background: var(--bg-surface); padding: 2rem; border-radius: var(--radius-md); max-width: 400px; text-align: center;">
+      <h2>Enable Notifications</h2>
+      <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">We need notification access to provide real-time
+        updates for changes to this app. Please click the button below to allow access.</p>
+      <button id="allow-notifications-btn" class="btn btn-primary" style="width: 100%;">Allow Notifications</button>
+    </div>
+  </div>
+
   <script>
     // Utility for showing alerts
     function showAlert(msg, type = 'error', containerId = 'alerts') {
@@ -51,6 +61,66 @@
       container.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
       setTimeout(() => { container.innerHTML = ''; }, 5000);
     }
+
+    // Notifications & SSE Logic
+    <% if (locals.user) { %>
+        document.addEventListener('DOMContentLoaded', () => {
+          const notificationModal = document.getElementById('notification-modal');
+          const allowBtn = document.getElementById('allow-notifications-btn');
+
+          // Check Notification permissions
+          if ('Notification' in window) {
+            if (Notification.permission === 'default') {
+              notificationModal.style.display = 'flex';
+            }
+
+            allowBtn.addEventListener('click', async () => {
+              const permission = await Notification.requestPermission();
+              if (permission === 'granted') {
+                notificationModal.style.display = 'none';
+                new Notification('App is ready', { body: 'You will now receive real-time updates.' });
+              } else {
+                alert('Notifications must be enabled for the app to work correctly.');
+              }
+            });
+
+            // Initialize SSE
+            const eventSource = new EventSource('/api/events');
+
+            eventSource.addEventListener('role_changed', (e) => {
+              const data = JSON.parse(e.data);
+              showAlert(`Your role has been updated to: ${data.role}`, 'success');
+              // Reload after a short delay so the user sees the alert before reloading to dashboard
+              setTimeout(() => window.location.reload(), 2000);
+            });
+
+            eventSource.addEventListener('user_registered', (e) => {
+              const data = JSON.parse(e.data);
+              if (Notification.permission === 'granted') {
+                new Notification('New User Registration', { body: `User ${data.username} has registered.` });
+              }
+            });
+
+            eventSource.addEventListener('user_logged_in', (e) => {
+              const data = JSON.parse(e.data);
+              if (Notification.permission === 'granted') {
+                new Notification('User Logged In', { body: `User ${data.username} just logged in.` });
+              }
+            });
+
+            eventSource.addEventListener('dates_updated', (e) => {
+              const data = JSON.parse(e.data);
+              if (Notification.permission === 'granted') {
+                new Notification('Dates Updated', { body: `User ${data.user} updated blocked dates in Shopify.` });
+              }
+            });
+
+            eventSource.onerror = (err) => {
+              console.error("SSE connection error", err);
+            };
+          }
+        });
+    <% } %>
 
   // Service Worker Registration
   if ('serviceWorker' in navigator) {
