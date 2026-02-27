@@ -234,6 +234,34 @@ router.post('/login/finish', async (req, res) => {
 });
 
 /**
+ * Refresh Session
+ */
+router.get('/refresh', async (req, res) => {
+  if (req.session.user) {
+    try {
+      const user = await UserService.getUserById(req.session.user.id);
+      if (user) {
+        req.session.user.role = user.role;
+        await new Promise((resolve, reject) => {
+          req.session.save((err) => {
+            if (err) reject(err);
+            else resolve();
+          });
+        });
+      }
+    } catch (err) {
+      console.error('Error refreshing session:', err);
+    }
+  }
+
+  if (req.session.user && ['user', 'admin'].includes(req.session.user.role)) {
+    res.redirect('/dashboard');
+  } else {
+    res.redirect('/');
+  }
+});
+
+/**
  * Logout
  */
 router.get('/logout', (req, res) => {

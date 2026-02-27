@@ -88,10 +88,7 @@
             const eventSource = new EventSource('/api/events');
 
             eventSource.addEventListener('role_changed', (e) => {
-              const data = JSON.parse(e.data);
-              showAlert(`Your role has been updated to: ${data.role}`, 'success');
-              // Reload after a short delay so the user sees the alert before reloading to dashboard
-              setTimeout(() => window.location.reload(), 2000);
+              window.location.href = '/auth/refresh';
             });
 
             eventSource.addEventListener('user_registered', (e) => {

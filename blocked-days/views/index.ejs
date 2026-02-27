@@ -1,23 +1,29 @@
 <div class="glass-panel" style="max-width: 450px; margin: 4rem auto;">
   <h2>Welcome</h2>
-  <p class="subtitle">Authenticate with your Passkey</p>
-  
   <div id="alerts"></div>
 
-  <div class="auth-form mt-4">
-    <button id="btnLogin" class="btn btn-primary">Sign In with Passkey</button>
+  <% if (locals.user && locals.user.role==='guest' ) { %>
+    <p class="subtitle" style="font-size: 1.1rem; text-align: center; margin-bottom: 0;">Waiting for approval...</p>
+    <div style="text-align: center; margin-top: 1rem;">
+      <p style="color: var(--text-secondary); font-size: 0.95rem;">Your account is pending administrator approval.</p>
+    </div>
+    <% } else { %>
+      <p class="subtitle">Authenticate with your Passkey</p>
+    <div class="auth-form mt-4">
+      <button id="btnLogin" class="btn btn-primary">Sign In with Passkey</button>
     
-    <% if (locals.registrationEnabled) { %>
-      <div style="text-align: center; margin: 1.5rem 0; color: var(--text-secondary); font-size: 0.9rem;">
-        &mdash; OR CREATE NEW &mdash;
-      </div>
-      <div class="input-group" style="margin-bottom: 1rem;">
-        <label for="username">Username</label>
-        <input type="text" id="username" placeholder="Enter username" autocomplete="username webauthn">
-      </div>
-      <button id="btnRegister" class="btn btn-secondary" style="width: 100%;">Create a New Passkey</button>
-    <% } %>
-  </div>
+      <% if (locals.registrationEnabled) { %>
+        <div style="text-align: center; margin: 1.5rem 0; color: var(--text-secondary); font-size: 0.9rem;">
+          &mdash; OR CREATE NEW &mdash;
+        </div>
+        <div class="input-group" style="margin-bottom: 1rem;">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Enter username" autocomplete="username webauthn">
+        </div>
+        <button id="btnRegister" class="btn btn-secondary" style="width: 100%;">Create a New Passkey</button>
+        <% } %>
+    </div>
+  <% } %>
 </div>
 
 <script>
