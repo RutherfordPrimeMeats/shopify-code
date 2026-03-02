@@ -1,7 +1,6 @@
 const express = require('express');
 const ShopifyService = require('../services/ShopifyService');
 const SettingsService = require('../services/SettingsService');
-const SSEManager = require('../services/SSEManager');
 const DiscordService = require('../services/DiscordService');
 const UserService = require('../services/UserService');
 const router = express.Router();
@@ -21,30 +20,6 @@ function requireAdmin(req, res, next) {
   }
   next();
 }
-
-/**
- * Server-Sent Events (SSE) Stream
- */
-router.get('/events', (req, res) => {
-  if (!req.session.user) {
-    return res.status(401).end();
-  }
-
-  // SSE Headers
-  res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
-  });
-
-  // Tell the client we've connected
-  res.write('data: {"message": "connected"}\n\n');
-
-  // Register client
-  SSEManager.addClient(req.session.user.id, req.session.user.role, res);
-});
-
-
 
 /**
  * Get current blocked dates
@@ -70,8 +45,6 @@ router.post('/dates', requireUserOrAdmin, async (req, res) => {
 
   try {
     const savedDates = await ShopifyService.saveSoldOutDates(dates);
-    // Notify admins that dates have been updated
-    SSEManager.sendToAdmins('dates_updated', { user: req.session.user.id });
     DiscordService.sendAdminNotification(
       'Dates Updated',
       `User ${req.session.user.id} updated blocked dates in Shopify.`
@@ -124,8 +97,6 @@ router.put('/admin/users/:userId/role', requireAdmin, async (req, res) => {
     }
 
     await UserService.updateUserRole(userId, role);
-    // Notify the user about their role change
-    SSEManager.sendToUser(userId, 'role_changed', { role });
 
     res.json({ success: true, newRole: role });
   } catch (error) {

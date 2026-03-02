@@ -60,22 +60,6 @@
           });
         }
 
-    // Notifications & SSE Logic
-    <% if (locals.user) { %>
-      document.addEventListener('DOMContentLoaded', () => {
-          // Initialize SSE
-          const eventSource = new EventSource('/api/events');
-
-          eventSource.addEventListener('role_changed', (e) => {
-            window.location.href = '/auth/refresh';
-          });
-
-          eventSource.onerror = (err) => {
-            console.error("SSE connection error", err);
-          };
-        });
-    <% } %>
-
   // Service Worker Registration
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {

@@ -2,7 +2,6 @@ const express = require('express');
 const { generateRegistrationOptions, verifyRegistrationResponse, generateAuthenticationOptions, verifyAuthenticationResponse } = require('@simplewebauthn/server');
 const UserService = require('../services/UserService');
 const SettingsService = require('../services/SettingsService');
-const SSEManager = require('../services/SSEManager');
 const DiscordService = require('../services/DiscordService');
 
 const router = express.Router();
@@ -109,8 +108,6 @@ router.post('/register/finish', checkRegistrationEnabled, async (req, res) => {
       req.session.currentChallenge = undefined;
       req.session.registeringUsername = undefined;
 
-      // Notify admins
-      SSEManager.sendToAdmins('user_registered', { username });
       DiscordService.sendAdminNotification(
         'New User Registration',
         `User ${username} has registered.`
@@ -226,8 +223,6 @@ router.post('/login/finish', async (req, res) => {
       req.session.currentChallenge = undefined;
       req.session.loginUsername = undefined;
 
-      // Notify admins
-      SSEManager.sendToAdmins('user_logged_in', { username: user.id });
       DiscordService.sendAdminNotification(
         'User Logged In',
         `User ${user.id} just logged in.`
