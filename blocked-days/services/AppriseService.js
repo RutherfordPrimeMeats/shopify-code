@@ -39,15 +39,21 @@ class AppriseService {
       console.log(`[AppriseService] Sending notification: ${title} - ${message}`);
       
       await new Promise((resolve, reject) => {
-        execFile('apprise', ['-t', title, '-b', message, appriseUrl], (error, stdout, stderr) => {
+          console.log(`[AppriseService] Spawning apprise with args: ['-t', '${title}', '-b', '${message}', '${appriseUrl.replace(/./g, '*')}']`);
+          const proc = execFile('apprise', ['-t', title, '-b', message, appriseUrl], (error, stdout, stderr) => {
           if (error) {
             console.error(`[AppriseService] Failed to send notification. Error: ${error.message}`);
             console.error(`[AppriseService] stderr: ${stderr}`);
             return reject(error);
           }
           console.log(`[AppriseService] Successfully sent notification.`);
+            console.log(`[AppriseService] Apprise stdout: ${stdout.trim()}`);
+            console.log(`[AppriseService] Apprise stderr: ${stderr.trim()}`);
           resolve();
         });
+
+          // Ensure stdin is closed so apprise doesn't hang waiting for body if it ignores -b
+          proc.stdin.end();
       });
 
       // Remove the successfully (or permanently failed) item from the queue
