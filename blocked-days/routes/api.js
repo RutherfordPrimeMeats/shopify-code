@@ -1,7 +1,7 @@
 const express = require('express');
 const ShopifyService = require('../services/ShopifyService');
 const SettingsService = require('../services/SettingsService');
-const DiscordService = require('../services/DiscordService');
+const AppriseService = require('../services/AppriseService');
 const UserService = require('../services/UserService');
 const router = express.Router();
 
@@ -45,7 +45,7 @@ router.post('/dates', requireUserOrAdmin, async (req, res) => {
 
   try {
     const savedDates = await ShopifyService.saveSoldOutDates(dates);
-    DiscordService.sendAdminNotification(
+    AppriseService.sendAdminNotification(
       'Dates Updated',
       `User ${req.session.user.id} updated blocked dates in Shopify.`
     );
