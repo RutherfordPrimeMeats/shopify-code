@@ -15,7 +15,7 @@
 
   <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;">
     <h3 style="font-size: 1.1rem; font-weight: 500;">Currently Blocked Dates</h3>
-    <button id="saveDatesBtn" class="btn btn-primary" style="display: none;">Save to Shopify</button>
+    <button id="saveDatesBtn" class="btn btn-primary" disabled style="opacity: 0.5; cursor: not-allowed;">Save to Shopify</button>
   </div>
 
   <ul id="datesContainer" class="date-list">
@@ -75,7 +75,9 @@
 
     // Check for changes to show/hide save button
     const hasChanges = JSON.stringify(blockedDates.slice().sort()) !== JSON.stringify(originalDates.slice().sort());
-    saveDatesBtn.style.display = hasChanges ? 'inline-flex' : 'none';
+    saveDatesBtn.disabled = !hasChanges;
+    saveDatesBtn.style.opacity = hasChanges ? '1' : '0.5';
+    saveDatesBtn.style.cursor = hasChanges ? 'pointer' : 'not-allowed';
 
     // All dates to display: union of blockedDates and originalDates
     const displayDates = [...new Set([...blockedDates, ...originalDates])];
@@ -177,6 +179,8 @@
   saveDatesBtn.addEventListener('click', async () => {
     saveDatesBtn.textContent = 'Saving...';
     saveDatesBtn.disabled = true;
+    saveDatesBtn.style.opacity = '0.5';
+    saveDatesBtn.style.cursor = 'not-allowed';
 
     try {
       const res = await fetch('/api/dates', {
@@ -197,7 +201,10 @@
       showAlert(e.message);
     } finally {
       saveDatesBtn.textContent = 'Save to Shopify';
-      saveDatesBtn.disabled = false;
+      const hasChanges = JSON.stringify(blockedDates.slice().sort()) !== JSON.stringify(originalDates.slice().sort());
+      saveDatesBtn.disabled = !hasChanges;
+      saveDatesBtn.style.opacity = hasChanges ? '1' : '0.5';
+      saveDatesBtn.style.cursor = hasChanges ? 'pointer' : 'not-allowed';
     }
   });
 
