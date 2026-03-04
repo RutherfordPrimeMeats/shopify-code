@@ -1,8 +1,8 @@
-const { execFile } = require('child_process');
+const { execFileSync } = require('child_process');
 
 class AppriseService {
   /**
-   * Send a notification asynchronously
+   * Send a notification synchronously
    */
   static sendAdminNotification(title, message) {
     const appriseUrl = process.env.APPRISE_REPORT_URL;
@@ -14,15 +14,16 @@ class AppriseService {
 
     console.log(`[AppriseService] Sending notification: ${title} - ${message}`);
 
-    // execFile runs asynchronously in the background and won't block the Node.js event loop
-    execFile('apprise', ['-t', title, '-b', message, appriseUrl], (error, stdout, stderr) => {
-      if (error) {
-        console.error(`[AppriseService] Failed to send notification. Error: ${error.message}`);
-        console.error(`[AppriseService] stderr: ${stderr}`);
-        return;
-      }
+    try {
+      // execFileSync runs synchronously and will block the Node.js event loop
+      execFileSync('apprise', ['-t', title, '-b', message, appriseUrl], { encoding: 'utf-8' });
       console.log(`[AppriseService] Successfully sent notification.`);
-    });
+    } catch (error) {
+      console.error(`[AppriseService] Failed to send notification. Error: ${error.message}`);
+      if (error.stderr) {
+        console.error(`[AppriseService] stderr: ${error.stderr}`);
+      }
+    }
   }
 }
 
