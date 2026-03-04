@@ -14,12 +14,15 @@ class AppriseService {
 
     console.log(`[AppriseService] Sending notification: ${title} - ${message}`);
 
+    const startTime = Date.now();
     try {
       // execFileSync runs synchronously and will block the Node.js event loop
       execFileSync('apprise', ['-t', title, '-b', message, appriseUrl], { encoding: 'utf-8' });
-      console.log(`[AppriseService] Successfully sent notification.`);
+      const duration = Date.now() - startTime;
+      console.log(`[AppriseService] Successfully sent notification in ${duration}ms.`);
     } catch (error) {
-      console.error(`[AppriseService] Failed to send notification. Error: ${error.message}`);
+      const duration = Date.now() - startTime;
+      console.error(`[AppriseService] Failed to send notification after ${duration}ms. Error: ${error.message}`);
       if (error.stderr) {
         console.error(`[AppriseService] stderr: ${error.stderr}`);
       }
