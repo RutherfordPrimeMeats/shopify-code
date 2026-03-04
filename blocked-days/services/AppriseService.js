@@ -1,70 +1,46 @@
-const { execFile } = require('child_process');
+const { fork } = require('child_process');
+const path = require('path');
 
 class AppriseService {
-  static queue = [];
-  static isProcessing = false;
-
   /**
-   * Add a notification to the queue
+   * Send an admin notification asynchronously using a forked child process
    */
   static sendAdminNotification(title, message) {
-    this.queue.push({ title, message });
-    if (!this.isProcessing) {
-      this.processQueue();
-    }
-  }
-
-  /**
-   * Process the notification queue recursively
-   */
-  static async processQueue() {
-    if (this.queue.length === 0) {
-      this.isProcessing = false;
-      return;
-    }
-
-    this.isProcessing = true;
-    const { title, message } = this.queue[0]; // Peek at the first item
-    
     const appriseUrl = process.env.APPRISE_REPORT_URL;
     
     if (!appriseUrl) {
       console.warn('[AppriseService] Missing APPRISE_REPORT_URL. Skipping notification.');
-      this.queue.shift();
-      setTimeout(() => this.processQueue(), 1000);
       return;
     }
 
-    try {
-      console.log(`[AppriseService] Sending notification: ${title} - ${message}`);
-      
-      await new Promise((resolve, reject) => {
-        execFile('apprise', [
-          '-t', title,
-          '-b', message,
-          '-SM', 'flush',
-          appriseUrl
-        ], (error, stdout, stderr) => {
-          if (error) {
-            console.error(`[AppriseService] Failed to send notification. Error: ${error.message}`);
-            return reject(error);
-          }
-          console.log(`[AppriseService] Successfully sent notification.`);
-          resolve();
-        });
-      });
+    console.log(`[AppriseService] Sending notification: ${title} - ${message}`);
 
-      // Remove the successfully (or permanently failed) item from the queue
-      this.queue.shift();
-      // Process next item after a short delay (1 second) to be safe
-      setTimeout(() => this.processQueue(), 1000);
+    // Fork a child process to handle the notification asynchronously
+    const child = fork(path.join(__dirname, 'apprise-worker.js'), {
+      silent: true,
+    });
 
-    } catch (error) {
-      console.error('[AppriseService] Error sending notification:', error);
-      // Remove it on hard crash and continue
-      this.queue.shift();
-      setTimeout(() => this.processQueue(), 1000);
-    }
+    // Send the notification data to the child process
+    child.send({ title, message, appriseUrl });
+
+    // Handle child process errors
+    child.on('error', (error) => {
+      console.error('[AppriseService] Child process error:', error);
+    });
+
+    // Clean up when child process exits
+    child.on('exit', (code, signal) => {
+      if (code !== 0 && code !== null) {
+        console.error(`[AppriseService] Child process exited with code ${code}`);
+      }
+    });
+
+    // Optionally disconnect after a timeout to prevent hanging
+    setTimeout(() => {
+      if (!child.killed) {
+        child.kill();
+      }
+    }, 30000);
   }
 }
 
