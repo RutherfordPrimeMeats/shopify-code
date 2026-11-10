@@ -1,0 +1,413 @@
+{
+  "current": {
+    "color_text": "#3d4246",
+    "color_body_text": "#788188",
+    "color_sale_text": "#7796a8",
+    "color_borders": "#e8e9eb",
+    "color_button": "#7796a8",
+    "color_button_text": "#fff",
+    "color_small_button": "#fff",
+    "color_small_button_text": "#3d4246",
+    "color_text_field": "#fff",
+    "color_text_field_text": "#000",
+    "color_image_overlay_text": "#fff",
+    "color_image_overlay": "#3d4246",
+    "image_overlay_opacity": "0.25",
+    "color_body_bg": "#fff",
+    "type_header_family": "Google_Work+Sans_600_sans",
+    "type_header_base_size": "26px",
+    "type_base_family": "Google_Work+Sans_400_sans",
+    "type_base_size": "16px",
+    "type_bold_product_titles": false,
+    "share_facebook": true,
+    "share_twitter": true,
+    "share_pinterest": true,
+    "social_twitter_link": "",
+    "social_facebook_link": "https://www.facebook.com/RutherfordPrimeMeats/",
+    "social_pinterest_link": "",
+    "social_instagram_link": "",
+    "social_tumblr_link": "",
+    "social_snapchat_link": "",
+    "social_youtube_link": "",
+    "social_vimeo_link": "",
+    "favicon": "",
+    "checkout_header_image": "shopify://shop_images/thank_you.png",
+    "checkout_logo_image": "shopify://shop_images/RPM_Logo_FINAL_500px_no_tag.jpg",
+    "checkout_logo_position": "left",
+    "checkout_logo_size": "large",
+    "checkout_body_background_image": "",
+    "checkout_body_background_color": "#fff",
+    "checkout_input_background_color_mode": "white",
+    "checkout_sidebar_background_image": "",
+    "checkout_sidebar_background_color": "#fafafa",
+    "checkout_heading_font": "Helvetica Neue",
+    "checkout_body_font": "Helvetica Neue",
+    "checkout_accent_color": "#003a5b",
+    "checkout_button_color": "#bbbc37",
+    "checkout_error_color": "#e89b00",
+    "sections": {
+      "header": {
+        "type": "header",
+        "settings": {
+          "align_logo": "left",
+          "logo": "shopify://shop_images/RPM_Logo_FINAL_500px_no_tag.jpg",
+          "logo_max_width": "100",
+          "main_linklist": "main-menu",
+          "message": true,
+          "message_text": "Home Deliveries to the following towns ONLY: RUTHERFORD, EAST RUTHERFORD & LYNDHURST NJ. Expect home deliveries between 5-7 pm. Occasionally deliveries have been delayed by a day. We thank you for your patience and understanding at this time. **Our meat and poultry prices have increased to reflect the increasing costs of meat and poultry nationally. We apologize for the inconvenience.**",
+          "message_link": "",
+          "color_bg": "#c84600",
+          "color_text": "#ffffff"
+        }
+      },
+      "feature-row": {
+        "type": "feature-row",
+        "settings": {
+          "image": "shopify://shop_images/turkey-legs-on-bbq.jpg",
+          "layout": "right",
+          "title": "We currently offer Free Delivery to orders over $50 to Rutherford NJ",
+          "text": "<p></p><p>Home deliveries are available Tuesday, Wednesday, and Thursday between 5:00 PM and 7:00 PM.</p><p></p>",
+          "button_label": "",
+          "button_link": ""
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {
+          "footer_linklist": "footer",
+          "footer_linklist_two": "",
+          "footer_newsletter_enable": false,
+          "show_payment_icons": true
+        }
+      },
+      "collection-template": {
+        "type": "collection-template",
+        "settings": {
+          "layout": "grid",
+          "grid": "4",
+          "rows": "6",
+          "show_collection_image": false,
+          "show_vendor": false,
+          "sort_enable": true,
+          "tags_enable": true
+        }
+      },
+      "cart-template": {
+        "type": "cart-template",
+        "settings": {
+          "cart_notes_enable": true
+        }
+      },
+      "product-template": {
+        "type": "product-template",
+        "settings": {
+          "image_size": "medium",
+          "show_quantity_selector": true,
+          "show_variant_labels": true,
+          "show_vendor": false,
+          "enable_zoom": true,
+          "show_share_buttons": true
+        }
+      },
+      "1490023070577": {
+        "type": "slideshow",
+        "blocks": {
+          "1490023070577-1": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/RPM_Logo_web_banner_271a7674-13df-4539-9a15-0d52a1bcda5f.jpg",
+              "alignment": "top",
+              "title": "",
+              "subheading": "",
+              "link": ""
+            }
+          },
+          "1490023070577-0": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/RPM_fiume_quote_9b0f1cdf-023a-4b32-bac1-fc61068c97bd.jpg",
+              "alignment": "center",
+              "title": "",
+              "subheading": "",
+              "link": ""
+            }
+          },
+          "1490111493682": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/RPM_batchelor_quote_273fd9f6-e33c-4732-b09a-77000f9402bd.jpg",
+              "alignment": "center",
+              "title": "",
+              "subheading": "",
+              "link": ""
+            }
+          }
+        },
+        "block_order": [
+          "1490023070577-1",
+          "1490023070577-0",
+          "1490111493682"
+        ],
+        "settings": {
+          "autoplay": true,
+          "autoplay_speed": "5000",
+          "slideshow_height": "small",
+          "text_size": "medium"
+        }
+      },
+      "1490540912600": {
+        "type": "collection-list",
+        "blocks": {
+          "1490540912600-0": {
+            "type": "featured_collection",
+            "settings": {
+              "collection": "all-products"
+            }
+          },
+          "1503328283664": {
+            "type": "featured_collection",
+            "settings": {
+              "collection": "best-selling-packages"
+            }
+          },
+          "1504885366798": {
+            "type": "featured_collection",
+            "settings": {
+              "collection": "breakfast-and-brunch"
+            }
+          },
+          "1494860556318": {
+            "type": "featured_collection",
+            "settings": {
+              "collection": "chicken-poultry"
+            }
+          },
+          "1494256867363": {
+            "type": "featured_collection",
+            "settings": {
+              "collection": "burgers"
+            }
+          },
+          "1494269381383": {
+            "type": "featured_collection",
+            "settings": {
+              "collection": "steaks"
+            }
+          },
+          "1494269387474": {
+            "type": "featured_collection",
+            "settings": {
+              "collection": "antibiotic-free-poultry"
+            }
+          },
+          "1494694206014": {
+            "type": "featured_collection",
+            "settings": {
+              "collection": "custom-orders"
+            }
+          }
+        },
+        "block_order": [
+          "1490540912600-0",
+          "1503328283664",
+          "1504885366798",
+          "1494860556318",
+          "1494256867363",
+          "1494269381383",
+          "1494269387474",
+          "1494694206014"
+        ],
+        "settings": {
+          "title": "",
+          "grid": "2"
+        }
+      },
+      "1494256703114": {
+        "type": "quotes",
+        "blocks": {
+          "1494256703114-0": {
+            "type": "quote",
+            "settings": {
+              "quote": "<p>\"Excellent products, great prices, outstanding service and delivery to your door. What more can you want? I rely on Jim and Rutherford Prime Meats for all my meat cuts. Trust me you will never be disappointed.\"</p>",
+              "author": "-Stephen Batchelor - Rutherford"
+            }
+          },
+          "1494256703114-1": {
+            "type": "quote",
+            "settings": {
+              "quote": "<p>\"Jimmy delivers top notch service and everything he brings me is delicious, fresh and tailored perfectly. This man cares about his customers and it shows in the finished product. Highly recommend his products!\"</p>",
+              "author": "-Mark Amatucci - Rutherford"
+            }
+          },
+          "1494256703114-2": {
+            "type": "quote",
+            "settings": {
+              "quote": "<p>\"Always a pleasure dealing with Jim. The quality of meat is superb.\"</p>",
+              "author": "-Joanne Fiume - Rutherford"
+            }
+          }
+        },
+        "block_order": [
+          "1494256703114-0",
+          "1494256703114-1",
+          "1494256703114-2"
+        ],
+        "settings": {
+          "title": "Testimonials"
+        }
+      },
+      "1rpm-product-selector-template": {
+        "type": "1rpm-product-selector-template",
+        "settings": {
+          "image_size": "medium",
+          "show_quantity_selector": false,
+          "show_variant_labels": true,
+          "show_vendor": false,
+          "enable_zoom": true,
+          "show_share_buttons": true
+        }
+      },
+      "1494258677868": {
+        "type": "feature-row",
+        "settings": {
+          "image": "shopify://shop_images/5_Day_5636cd9e-5709-4ff1-94fd-d586e351c544.jpg",
+          "layout": "left",
+          "title": "Featured Product: 5 Day Survival Package",
+          "text": "<p>Try the survival kit and&nbsp;your meal planning will never be the same! &nbsp;</p>",
+          "button_label": "5 Day Survival kit",
+          "button_link": "shopify://products/5-day-survival-package"
+        }
+      },
+      "1495333466646": {
+        "type": "feature-row",
+        "disabled": true,
+        "settings": {
+          "image": "shopify://shop_images/summersizzler.jpg",
+          "layout": "left",
+          "title": "14-16 lb Thanksgiving Turkey",
+          "text": "<p>Feeds up to 25! The easiest way to party, this box includes burgers, hot dogs, chicken breast and ribs!</p>",
+          "button_label": "14-16 lb Thanksgiving Turkey",
+          "button_link": "shopify://products/14-16-lb-thanksgiving-turkey"
+        }
+      },
+      "1497208003459": {
+        "type": "featured-product",
+        "disabled": true,
+        "settings": {
+          "featured_product": "wings-ribs-fundraiser-for-jim-dandys-recovery-effort",
+          "image_size": "medium",
+          "show_quantity_selector": false,
+          "show_variant_labels": true,
+          "show_vendor": false,
+          "enable_zoom": true,
+          "show_share_buttons": true
+        }
+      },
+      "1518985432595": {
+        "type": "featured-product",
+        "disabled": true,
+        "settings": {
+          "featured_product": "carando-spiral-ham",
+          "image_size": "medium",
+          "show_quantity_selector": false,
+          "show_variant_labels": true,
+          "show_vendor": false,
+          "enable_zoom": true,
+          "show_share_buttons": true
+        }
+      },
+      "1541372448770": {
+        "type": "featured-product",
+        "disabled": true,
+        "settings": {
+          "featured_product": "14-16-lb-thanksgiving-turkey",
+          "image_size": "medium",
+          "show_quantity_selector": false,
+          "show_variant_labels": true,
+          "show_vendor": false,
+          "enable_zoom": false,
+          "show_share_buttons": true
+        }
+      },
+      "1590673788206": {
+        "type": "collection",
+        "settings": {
+          "title": "Featured collection - the smoking lounge",
+          "collection": "the-smoking-lounge",
+          "grid": "3",
+          "rows": "2",
+          "show_vendor": false,
+          "show_view_all": false
+        }
+      }
+    },
+    "content_for_index": [
+      "1490023070577",
+      "1497208003459",
+      "1494258677868",
+      "1590673788206",
+      "1541372448770",
+      "feature-row",
+      "1518985432595",
+      "1495333466646",
+      "1490540912600",
+      "1494256703114"
+    ]
+  },
+  "presets": {
+    "Default": {
+      "sections": {
+        "header": {
+          "type": "header",
+          "settings": {}
+        },
+        "hero": {
+          "type": "hero",
+          "settings": {
+            "text_size": "large"
+          }
+        },
+        "slideshow": {
+          "type": "slideshow",
+          "blocks": {
+            "slideshow-0": {
+              "type": "image",
+              "settings": {}
+            },
+            "slideshow-1": {
+              "type": "image",
+              "settings": {}
+            }
+          },
+          "block_order": [
+            "slideshow-0",
+            "slideshow-1"
+          ],
+          "settings": {}
+        },
+        "featured-collections": {
+          "type": "collection",
+          "settings": {
+            "collection": "frontpage"
+          }
+        },
+        "feature-row": {
+          "type": "feature-row",
+          "settings": {}
+        },
+        "footer": {
+          "type": "footer",
+          "settings": {
+            "footer_linklist_two": ""
+          }
+        }
+      },
+      "content_for_index": [
+        "hero",
+        "featured-collections",
+        "feature-row",
+        "slideshow"
+      ]
+    }
+  }
+}
