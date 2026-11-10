@@ -111,8 +111,8 @@
         </tbody>
       </table>
 
-      {% if cart.total_price < 5000 %}
-        <div style="font-weight: 700">Please ensure you have $50 or more in your cart to check out.</div>
+      {% if cart.total_price < 4000 %}
+        <div style="font-weight: 700">Please ensure you have $40 or more in your cart to check out.</div>
         <input type="submit" name="update" class="btn btn--secondary cart__update cart__update--large small--hide" value="{{ 'cart.general.update' | t }}">
       {% else %}
       <footer class="cart__footer">

@@ -8,7 +8,7 @@
     <br>
     Home Delivery: <input type="radio" name="attributes[location]" checked value="home" required>
     <br>
-    Mason's Cellar: <input type="radio" name="attributes[location]" value="mason" required>
+    Matera's on Park: <input type="radio" name="attributes[location]" value="matera" required>
     <br>
     Select an available delivery date:<br>
     <input id="deliveryDatePicker" type="text" name="attributes[delivery-date]"  value=""
@@ -19,7 +19,7 @@
            style="width: 250px" placeholder="123 Home St, Rutherford" required></input><br><br>
     <span style="font-size: 85%">
       You can pick up between 5pm-8pm for weekday orders<br>
-      and 12:00pm-8pm for Saturday orders unless curfews dictate otherwise.
+      and 12:00pm-8pm for Saturday orders.
     </span>
   </p>
 </div>
@@ -29,9 +29,12 @@
 (function() {
   $('input[name="attributes[location]"]').click(function() {
     var val = $(this).val();
-    $("#deliveryAddress").val("");
-    if (val == "mason") {
-      $("#deliveryAddress").val("32 Ames Ave - (Mason's)");
+    var addrElt = $("#deliveryAddress");
+    addrElt.val("");
+    addrElt.attr("readonly", false);
+    if (val == "matera") {
+      addrElt.attr("readonly", true);
+      addrElt.val("72 Park Ave - (Matera's)");
     }
     $("#deliveryDatePicker").val("");
   });
@@ -42,7 +45,7 @@
     return $.inArray(ymd, ['2018-8-15']) >= 0;
   };
     
-  // Only allow Tue/Wed/Thur delivery, Mason's all days except Sunday.
+  // Only allow Tue/Wed/Thur delivery, Matera's all days except Sunday.
   var beforeShowDay = function(day) {
     var ymd = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate();
     if (isGlobalBlockedDay(ymd)) {
