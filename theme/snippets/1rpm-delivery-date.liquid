@@ -22,10 +22,8 @@
 <script type="text/javascript" src="{{ 'sold-out.js' | asset_url }}"></script>
 <script>
 (function() {
-  // You can disable holidays here, use single digit values like '2017-5-29'.
   var isGlobalBlockedDay = function(ymd) {
-    if ($.inArray(ymd, window.SOLD_OUT_DATES) >= 0) { return true; }
-    return $.inArray(ymd, ['2026-11-26', '2026-11-27', '2026-12-24', '2026-12-25', '2026-12-31', '2027-1-1']) >= 0;
+    return Array.isArray(window.SOLD_OUT_DATES) && $.inArray(ymd, window.SOLD_OUT_DATES) >= 0;
   };
     
   // Only allow Tue/Wed/Thu delivery.
