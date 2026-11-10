@@ -1,5 +1,3 @@
-{{ '//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js' | script_tag }}
-
 <style>
 .rpm-selector > div {
 	cursor: pointer;
@@ -47,71 +45,92 @@
   ];
   var productObj = {{product|json}};
 
+  var selectedContainer = document.getElementById('rpm-selector-selected');
+  var selectableContainer = document.getElementById('rpm-selector-selectable');
+  var selectedInput = document.getElementById('rpm-selected-input');
+  var productSelectId = document.getElementById('rpm-product-select-id');
+  var priceElement = document.getElementById('ProductPrice-1rpm-product-selector-template');
 
   var resetSelectedItemText = function() {
-    var selectedItemsElt = $('#rpm-selector-selected');
+    var children = selectedContainer.children;
     var selectedText = [];
-    $.map(selectedItemsElt.children(), function(elt) {
-      selectedText.push($(elt).data('item'));
-    });
-    $('#rpm-selected-input').val(selectedText.join(', '));
-    
-    var variant = '' + (selectedText.join(', ').match(/premium/g) || []).length;
-    if (variant == "2") {
-      $("#ProductPrice-1rpm-product-selector-template").text("$91.00");
-    } else if (variant == "1") {
-      $("#ProductPrice-1rpm-product-selector-template").text("$80.00");
-    } else {
-      $("#ProductPrice-1rpm-product-selector-template").text("$69.50");
+    for (var i = 0; i < children.length; i++) {
+      selectedText.push(children[i].getAttribute('data-item'));
     }
-    for (var i=0; i < productObj.variants.length; i++) {
-      if (productObj.variants[i].title == variant) {
-        $("#rpm-product-select-id").val(productObj.variants[i].id);
+    var joinedText = selectedText.join(', ');
+    selectedInput.value = joinedText;
+
+    var variant = '' + (joinedText.match(/premium/g) || []).length;
+    if (priceElement) {
+      if (variant === '2') {
+        priceElement.textContent = '$91.00';
+      } else if (variant === '1') {
+        priceElement.textContent = '$80.00';
+      } else {
+        priceElement.textContent = '$69.50';
+      }
+    }
+    if (productObj && Array.isArray(productObj.variants)) {
+      for (var j = 0; j < productObj.variants.length; j++) {
+        if (productObj.variants[j].title == variant) {
+          productSelectId.value = productObj.variants[j].id;
+        }
       }
     }
   };
 
-  var isItemSelected = function(i) {
-    var selectedItems = $('#rpm-selected-input').val().split(', ');
-    return selectedItems.indexOf(i) >= 0;
+  var isItemSelected = function(item) {
+    if (!selectedInput.value) {
+      return false;
+    }
+    var selectedItems = selectedInput.value.split(', ');
+    return selectedItems.indexOf(item) >= 0;
   };
 
-  var addToSelectedItems = function(i) {
-    var selectedItemsElt = $('#rpm-selector-selected');
-    if (selectedItemsElt.children().length >= 5) {
+  var addToSelectedItems = function(item) {
+    if (selectedContainer.children.length >= 5) {
       return;
     }
 
-    if (isItemSelected(i)) {
+    if (isItemSelected(item)) {
       alert("Oops! Looks like you've already selected this item");
       return;
     }
 
-    var selectedItem = $('<div>X ' + i + '</div>');
-    selectedItem.data('item', i);
-    selectedItem.click(function(e) {
-      $(e.target).remove();
+    var selectedItem = document.createElement('div');
+    selectedItem.textContent = 'X ' + item;
+    selectedItem.setAttribute('data-item', item);
+    selectedItem.addEventListener('click', function() {
+      if (selectedItem.parentNode) {
+        selectedItem.parentNode.removeChild(selectedItem);
+      }
       resetSelectedItemText();
     });
-    selectedItemsElt.append(selectedItem);
+    selectedContainer.appendChild(selectedItem);
 
     resetSelectedItemText();
   };
 
-  $.map(possibleItems, function(i) {
-    var selectableItem = $('<div>' + i + '</div>');
-    selectableItem.click(i, function(e) {
-      addToSelectedItems(e.data);
-    });
-    $('#rpm-selector-selectable').append(selectableItem);
-  });
+  for (var idx = 0; idx < possibleItems.length; idx++) {
+    (function(item) {
+      var selectableItem = document.createElement('div');
+      selectableItem.textContent = item;
+      selectableItem.addEventListener('click', function() {
+        addToSelectedItems(item);
+      });
+      selectableContainer.appendChild(selectableItem);
+    })(possibleItems[idx]);
+  }
 
-  $('button[name="add"]').click(function() {
-    var selectedItemsElt = $('#rpm-selector-selected');
-    if (selectedItemsElt.children().length < 5) {
-      alert('Please select five items.');
-      return false;
-    }
-  });
+  var addButton = document.querySelector('button[name="add"]');
+  if (addButton) {
+    addButton.addEventListener('click', function(e) {
+      if (selectedContainer.children.length < 5) {
+        alert('Please select five items.');
+        e.preventDefault();
+        return false;
+      }
+    });
+  }
 })();
 </script>

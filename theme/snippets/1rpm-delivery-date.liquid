@@ -1,15 +1,117 @@
-{{ '//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js' | script_tag }}
-{{ '//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js' | script_tag }}
-{{ '//ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css' | stylesheet_tag }}
+<style>
+.rpm-datepicker-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.rpm-datepicker-popup {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  margin-top: 4px;
+  width: 260px;
+  background: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  color: #444444;
+  user-select: none;
+}
+.rpm-datepicker-popup[hidden] {
+  display: none;
+}
+.rpm-datepicker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f6f6f6;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  padding: 4px 6px;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+.rpm-datepicker-nav {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 2px 8px;
+  font-size: 14px;
+  line-height: 1.2;
+  color: #0073ea;
+}
+.rpm-datepicker-nav:hover:not(:disabled) {
+  background: #0073ea;
+  color: #ffffff;
+}
+.rpm-datepicker-nav:disabled {
+  color: #cccccc;
+  cursor: default;
+}
+.rpm-datepicker-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+}
+.rpm-datepicker-table th {
+  text-align: center;
+  padding: 4px 0;
+  font-size: 11px;
+  font-weight: bold;
+  color: #666666;
+  border: none;
+}
+.rpm-datepicker-table td {
+  text-align: center;
+  padding: 1px;
+  border: none;
+}
+.rpm-datepicker-day {
+  width: 100%;
+  padding: 5px 0;
+  border: 1px solid #dddddd;
+  border-radius: 2px;
+  background: #f6f6f6;
+  color: #0073ea;
+  font-weight: bold;
+  font-size: 12px;
+  cursor: pointer;
+}
+.rpm-datepicker-day:hover:not(:disabled) {
+  background: #0073ea;
+  border-color: #0073ea;
+  color: #ffffff;
+}
+.rpm-datepicker-day.is-selected {
+  background: #ffffff;
+  border-color: #ff0084;
+  color: #ff0084;
+}
+.rpm-datepicker-day:disabled {
+  background: #fafafa;
+  border-color: #eeeeee;
+  color: #cccccc;
+  font-weight: normal;
+  cursor: not-allowed;
+}
+</style>
 
 <div class="grid__item medium-up--one-half cart-note delivery-note">
   <p>
     <label for="deliveryDatePicker" class="cart-note__label small--text-center">HOME DELIVERY:</label>
     <input type="hidden" name="attributes[location]" value="home">
     Select an available delivery date:<br>
-    <input id="deliveryDatePicker" type="text" name="attributes[delivery-date]"  value=""
-           title="The mm/dd/yyyy of the requested delivery. Please select a date from the pop-up calendar."
-           pattern="\d\d\/\d\d\/\d\d\d\d" required /><br>
+    <span class="rpm-datepicker-wrapper">
+      <input id="deliveryDatePicker" type="text" name="attributes[delivery-date]" value=""
+             autocomplete="off"
+             title="The mm/dd/yyyy of the requested delivery. Please select a date from the pop-up calendar."
+             pattern="\d\d\/\d\d\/\d\d\d\d" required />
+      <div id="rpmDatePickerPopup" class="rpm-datepicker-popup" role="dialog" aria-label="Choose delivery date" hidden></div>
+    </span><br>
     My delivery address is:<br>
     <input type="text" id="deliveryAddress" name="attributes[delivery-address]"
            style="width: 250px" placeholder="123 Home St, Rutherford" required><br><br>
@@ -22,27 +124,246 @@
 <script type="text/javascript" src="{{ 'sold-out.js' | asset_url }}"></script>
 <script>
 (function() {
+  var ALLOWED_DAYS = [2, 3, 4, 5];
+  var MONTH_NAMES = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  var DAY_HEADERS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
   var isGlobalBlockedDay = function(ymd) {
-    return Array.isArray(window.SOLD_OUT_DATES) && $.inArray(ymd, window.SOLD_OUT_DATES) >= 0;
+    return Array.isArray(window.SOLD_OUT_DATES) && window.SOLD_OUT_DATES.indexOf(ymd) >= 0;
   };
-    
+
   // Only allow Tue/Wed/Thu/Fri delivery.
   var beforeShowDay = function(day) {
     var ymd = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate();
     if (isGlobalBlockedDay(ymd)) {
       return [false, ''];
     }
-    if ($.inArray(day.getDay(), [2, 3, 4, 5]) >= 0) {
+    if (ALLOWED_DAYS.indexOf(day.getDay()) >= 0) {
       return [true, ''];
     }
     return [false, ''];
   };
 
-  // Install date picker.
-  $('#deliveryDatePicker').datepicker({
-    minDate: +2,
-    maxDate: '+2M',
-    beforeShowDay: beforeShowDay
+  var stripTime = function(d) {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  };
+
+  var addMonths = function(date, months) {
+    var targetMonth = date.getMonth() + months;
+    var year = date.getFullYear() + Math.floor(targetMonth / 12);
+    var month = ((targetMonth % 12) + 12) % 12;
+    var maxDayInMonth = new Date(year, month + 1, 0).getDate();
+    var day = Math.min(date.getDate(), maxDayInMonth);
+    return new Date(year, month, day);
+  };
+
+  var pad2 = function(n) {
+    return n < 10 ? '0' + n : '' + n;
+  };
+
+  var formatMMDDYYYY = function(d) {
+    return pad2(d.getMonth() + 1) + '/' + pad2(d.getDate()) + '/' + d.getFullYear();
+  };
+
+  var parseMMDDYYYY = function(str) {
+    var match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(str);
+    if (!match) {
+      return null;
+    }
+    var month = parseInt(match[1], 10) - 1;
+    var day = parseInt(match[2], 10);
+    var year = parseInt(match[3], 10);
+    var date = new Date(year, month, day);
+    if (date.getFullYear() !== year || date.getMonth() !== month || date.getDate() !== day) {
+      return null;
+    }
+    return date;
+  };
+
+  var today = stripTime(new Date());
+  var minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+  var maxDate = addMonths(today, 2);
+
+  var isDateSelectable = function(d) {
+    var clean = stripTime(d);
+    if (clean < minDate || clean > maxDate) {
+      return false;
+    }
+    return beforeShowDay(clean)[0];
+  };
+
+  var input = document.getElementById('deliveryDatePicker');
+  var popup = document.getElementById('rpmDatePickerPopup');
+  if (!input || !popup) {
+    return;
+  }
+
+  var viewYear = minDate.getFullYear();
+  var viewMonth = minDate.getMonth();
+
+  var validateInput = function() {
+    var val = input.value.trim();
+    if (!val) {
+      input.setCustomValidity('');
+      return;
+    }
+    var parsed = parseMMDDYYYY(val);
+    if (!parsed || !isDateSelectable(parsed)) {
+      input.setCustomValidity('Please select an available delivery date from the pop-up calendar.');
+    } else {
+      input.setCustomValidity('');
+    }
+  };
+
+  var renderCalendar = function() {
+    popup.innerHTML = '';
+
+    var header = document.createElement('div');
+    header.className = 'rpm-datepicker-header';
+
+    var prevBtn = document.createElement('button');
+    prevBtn.type = 'button';
+    prevBtn.className = 'rpm-datepicker-nav';
+    prevBtn.setAttribute('aria-label', 'Previous Month');
+    prevBtn.textContent = '\u2039';
+    var atMinMonth = viewYear < minDate.getFullYear() ||
+      (viewYear === minDate.getFullYear() && viewMonth <= minDate.getMonth());
+    prevBtn.disabled = atMinMonth;
+    prevBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      viewMonth--;
+      if (viewMonth < 0) {
+        viewMonth = 11;
+        viewYear--;
+      }
+      renderCalendar();
+    });
+
+    var title = document.createElement('span');
+    title.textContent = MONTH_NAMES[viewMonth] + ' ' + viewYear;
+
+    var nextBtn = document.createElement('button');
+    nextBtn.type = 'button';
+    nextBtn.className = 'rpm-datepicker-nav';
+    nextBtn.setAttribute('aria-label', 'Next Month');
+    nextBtn.textContent = '\u203A';
+    var atMaxMonth = viewYear > maxDate.getFullYear() ||
+      (viewYear === maxDate.getFullYear() && viewMonth >= maxDate.getMonth());
+    nextBtn.disabled = atMaxMonth;
+    nextBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      viewMonth++;
+      if (viewMonth > 11) {
+        viewMonth = 0;
+        viewYear++;
+      }
+      renderCalendar();
+    });
+
+    header.appendChild(prevBtn);
+    header.appendChild(title);
+    header.appendChild(nextBtn);
+    popup.appendChild(header);
+
+    var table = document.createElement('table');
+    table.className = 'rpm-datepicker-table';
+
+    var thead = document.createElement('thead');
+    var headRow = document.createElement('tr');
+    for (var h = 0; h < DAY_HEADERS.length; h++) {
+      var th = document.createElement('th');
+      th.textContent = DAY_HEADERS[h];
+      headRow.appendChild(th);
+    }
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    var tbody = document.createElement('tbody');
+    var firstDayOfWeek = new Date(viewYear, viewMonth, 1).getDay();
+    var daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+    var selectedDate = parseMMDDYYYY(input.value.trim());
+
+    var dayNum = 1;
+    for (var rowIdx = 0; rowIdx < 6; rowIdx++) {
+      if (dayNum > daysInMonth) {
+        break;
+      }
+      var tr = document.createElement('tr');
+      for (var colIdx = 0; colIdx < 7; colIdx++) {
+        var td = document.createElement('td');
+        if ((rowIdx === 0 && colIdx < firstDayOfWeek) || dayNum > daysInMonth) {
+          td.textContent = '';
+        } else {
+          (function(currentDay) {
+            var candidate = new Date(viewYear, viewMonth, currentDay);
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'rpm-datepicker-day';
+            btn.textContent = '' + currentDay;
+
+            if (selectedDate &&
+                selectedDate.getFullYear() === viewYear &&
+                selectedDate.getMonth() === viewMonth &&
+                selectedDate.getDate() === currentDay) {
+              btn.className += ' is-selected';
+            }
+
+            if (!isDateSelectable(candidate)) {
+              btn.disabled = true;
+            } else {
+              btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                input.value = formatMMDDYYYY(candidate);
+                validateInput();
+                popup.hidden = true;
+              });
+            }
+            td.appendChild(btn);
+          })(dayNum);
+          dayNum++;
+        }
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    popup.appendChild(table);
+  };
+
+  var openPopup = function() {
+    var current = parseMMDDYYYY(input.value.trim());
+    if (current && current >= minDate && current <= maxDate) {
+      viewYear = current.getFullYear();
+      viewMonth = current.getMonth();
+    } else {
+      viewYear = minDate.getFullYear();
+      viewMonth = minDate.getMonth();
+    }
+    renderCalendar();
+    popup.hidden = false;
+  };
+
+  input.addEventListener('focus', openPopup);
+  input.addEventListener('click', function(e) {
+    e.stopPropagation();
+    openPopup();
+  });
+  input.addEventListener('input', validateInput);
+  input.addEventListener('change', validateInput);
+
+  document.addEventListener('click', function(e) {
+    if (!popup.hidden && !popup.contains(e.target) && e.target !== input) {
+      popup.hidden = true;
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !popup.hidden) {
+      popup.hidden = true;
+    }
   });
 })();
 </script>
