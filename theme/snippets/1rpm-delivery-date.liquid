@@ -14,7 +14,7 @@
     <input type="text" id="deliveryAddress" name="attributes[delivery-address]"
            style="width: 250px" placeholder="123 Home St, Rutherford" required><br><br>
     <span style="font-size: 85%">
-      Home deliveries are available Tuesday, Wednesday, and Thursday.
+      Home deliveries are available Tuesday, Wednesday, Thursday, and Friday.
     </span>
   </p>
 </div>
@@ -26,13 +26,13 @@
     return Array.isArray(window.SOLD_OUT_DATES) && $.inArray(ymd, window.SOLD_OUT_DATES) >= 0;
   };
     
-  // Only allow Tue/Wed/Thu delivery.
+  // Only allow Tue/Wed/Thu/Fri delivery.
   var beforeShowDay = function(day) {
     var ymd = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate();
     if (isGlobalBlockedDay(ymd)) {
       return [false, ''];
     }
-    if ($.inArray(day.getDay(), [2, 3, 4]) >= 0) {
+    if ($.inArray(day.getDay(), [2, 3, 4, 5]) >= 0) {
       return [true, ''];
     }
     return [false, ''];
