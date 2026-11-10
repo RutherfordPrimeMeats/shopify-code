@@ -4,22 +4,17 @@
 
 <div class="grid__item medium-up--one-half cart-note delivery-note">
   <p>
-    <label for="datePicker" class="cart-note__label small--text-center">DELIVERY OR PICKUP OPTIONS:</label>
-    <br>
-    Home Delivery: <input type="radio" name="attributes[location]" checked value="home" required>
-    <br>
-    Matera's on Park: <input type="radio" name="attributes[location]" value="matera" required>
-    <br>
+    <label for="deliveryDatePicker" class="cart-note__label small--text-center">HOME DELIVERY:</label>
+    <input type="hidden" name="attributes[location]" value="home">
     Select an available delivery date:<br>
     <input id="deliveryDatePicker" type="text" name="attributes[delivery-date]"  value=""
            title="The mm/dd/yyyy of the requested delivery. Please select a date from the pop-up calendar."
            pattern="\d\d\/\d\d\/\d\d\d\d" required /><br>
-    My address is:<br>
-    <input type="text" id="deliveryAddress" rows="2" cols="50" name="attributes[delivery-address]"
-           style="width: 250px" placeholder="123 Home St, Rutherford" required></input><br><br>
+    My delivery address is:<br>
+    <input type="text" id="deliveryAddress" name="attributes[delivery-address]"
+           style="width: 250px" placeholder="123 Home St, Rutherford" required><br><br>
     <span style="font-size: 85%">
-      You can pick up between 5pm-8pm for weekday orders<br>
-      and 12:00pm-8pm for Saturday orders.
+      Home deliveries are available Tuesday, Wednesday, and Thursday.
     </span>
   </p>
 </div>
@@ -27,40 +22,20 @@
 <script type="text/javascript" src="{{ 'sold-out.js' | asset_url }}"></script>
 <script>
 (function() {
-  $('input[name="attributes[location]"]').click(function() {
-    var val = $(this).val();
-    var addrElt = $("#deliveryAddress");
-    addrElt.val("");
-    addrElt.attr("readonly", false);
-    if (val == "matera") {
-      addrElt.attr("readonly", true);
-      addrElt.val("72 Park Ave - (Matera's)");
-    }
-    $("#deliveryDatePicker").val("");
-  });
-  
   // You can disable holidays here, use single digit values like '2017-5-29'.
   var isGlobalBlockedDay = function(ymd) {
     if ($.inArray(ymd, window.SOLD_OUT_DATES) >= 0) { return true; }
     return $.inArray(ymd, ['2018-8-15']) >= 0;
   };
     
-  // Only allow Tue/Wed/Thur delivery, Matera's all days except Sunday.
+  // Only allow Tue/Wed/Thu delivery.
   var beforeShowDay = function(day) {
     var ymd = day.getFullYear() + '-' + (day.getMonth() + 1) + '-' + day.getDate();
     if (isGlobalBlockedDay(ymd)) {
       return [false, ''];
     }
-    // Find out which option the user selected.
-    var orderType = $('input[name="attributes[location]"]:checked').val();
-    if (orderType == "home") {
-      if ($.inArray(day.getDay(), [2, 3, 4]) >= 0) {
-        return [true, ''];
-      }
-    } else {
-      if ($.inArray(day.getDay(), [1, 2, 3, 4, 5, 6]) >= 0) {
-        return [true, ''];
-      }
+    if ($.inArray(day.getDay(), [2, 3, 4]) >= 0) {
+      return [true, ''];
     }
     return [false, ''];
   };
